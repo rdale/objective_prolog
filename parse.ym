@@ -1,0 +1,625 @@
+%{
+
+/****************************************************************************/
+/* parse.ym																	*/
+/*																			*/
+/* Author:	Richard Dale													*/
+/* Date:	28/01/93														*/
+/*																			*/
+/* Copyright (c) 1993-2009 Richard Dale.									*/
+/****************************************************************************/
+
+#include <sys/types.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+#include <stdio.h>
+#include <limits.h>
+
+#import "prolog.h"
+
+#import "Prolog.h"
+#import "Term.h"
+#import "ListTerm.h"
+#import "FunctionTerm.h"
+#import "VariableTerm.h"
+#import "NamedVariable.h"
+#import "NumericTerm.h"
+#import "Structure.h"
+#import "PrefixExpression.h"
+#import "InfixExpression.h"
+#import "PostfixExpression.h"
+#import "Clause.h"
+#import "NestedStructureIterator.h"
+
+#define YYDEBUG		1
+#undef YYDEBUG		
+
+#ifdef YYDEBUG
+#define TRACE_RULE(RULE, TERM)	printf("RULE: %s\n", RULE);
+//#define TRACE_RULE(RULE, TERM)			[[prolog consoleOut] printWithFormat: @"%@ -> ", RULE]; \
+//										[TERM printForDebugger: [prolog consoleOut]]; \
+//										[[prolog consoleOut] printWithFormat: @"\n"];
+#else
+#define TRACE_RULE(RULE, TERM)
+#endif
+
+extern id		prolog;
+
+extern void		ResetLex(void);
+extern void		yyerror(char * fmt, ...);
+extern int		yywrap(void);
+
+id		CurrentTerm(void);
+static id		addNamedVariable(char * name);
+
+static	id		currentTerm = nil;
+static	id		variableTable = nil;
+
+static void		clearLookaheadToken(void);
+
+%}
+
+%union {
+	int				intValue;
+	char *			stringValue;
+	id				idValue;
+}
+
+%token
+	T_ANONYMOUS_VARIABLE
+	T_APPLY_PAIR_CONSTRUCTOR
+	T_BEGIN_TUPLE
+	T_COMMA
+	T_CURLY_LPAREN
+	T_CURLY_RPAREN
+	T_DIV_OP
+	T_END_TUPLE
+	T_EQ_OP
+	T_EVAL_ATOM_LIST
+	T_EXPRESSION_RULE_OP
+	T_FLOATING_POINT_LITERAL
+	T_FN
+	T_FIND_FIRST_SOLUTION
+	T_GE_OP
+	T_GT_OP
+	T_HEAD_TAIL_SEPARATOR
+	T_IDENTIFIER
+	T_IF_OP
+	T_IMPLY_OP
+	T_INFIX_OP
+	T_IS_OP
+	T_LE_OP
+	T_LOGICAL_AND_OP
+	T_LOGICAL_COMPLEMENT_OP
+	T_LOGICAL_OR_OP
+	T_LPAREN
+	T_LT_OP
+	T_MINUS_OP
+	T_MOD_OP
+	T_MULT_OP
+	T_NE_OP
+	T_NOT_OP
+	T_NUMERIC_LIT
+	T_DOT
+	T_PLUS_OP
+	T_QUERY_OP
+	T_QUOTIENT_OP
+	T_RPAREN
+	T_OR_OP
+	T_SHIFT_LEFT_OP
+	T_SHIFT_RIGHT_OP
+	T_SQUARE_LPAREN
+	T_SQUARE_RPAREN
+	T_STANDARD_LPAREN
+	T_STANDARD_RPAREN
+	T_STRICT_EQ_OP
+	T_STRICT_NE_OP
+	T_STRING_LIT
+	T_UNIV_OP
+	T_VARIABLE
+	
+%left T_IF_OP
+%left T_QUERY_OP
+%left T_OR_OP
+%left T_IMPLY_OP
+%left T_COMMA
+
+%left T_PLUS_OP T_MINUS_OP
+%left T_MULT_OP T_DIV_OP
+
+
+%token <intValue>
+	T_NUMERIC_LIT
+
+%token <stringValue>
+	T_DOT
+	T_IDENTIFIER
+	T_NOT_OP
+	T_STRING_LIT
+	T_VARIABLE
+	T_EQ_OP
+	T_NE_OP
+	T_LT_OP
+	T_GT_OP
+	T_LE_OP
+	T_GE_OP
+	T_STRICT_EQ_OP
+	T_STRICT_NE_OP
+	T_UNIV_OP
+	T_OR_OP
+	T_IMPLY_OP
+	T_INFIX_OP
+	T_IS_OP
+	T_PLUS_OP
+	T_MINUS_OP
+	T_DIV_OP
+	T_MULT_OP
+	T_MOD_OP
+	T_IF_OP
+	T_QUERY_OP
+	T_COMMA
+
+%type <intValue>
+	numeric_literal
+
+%type <stringValue>
+	infix_op
+
+%type <idValue>
+	clause
+	clause_term
+	or_expression
+	goal_sequence
+	goal
+	arg_sequence
+	variable
+	structure
+	list_sequence
+	list
+	list_pair
+	list_end
+	string_literal
+
+%start prolog_start
+	
+%%
+
+prolog_start
+	:	/* empty */
+		{
+			currentTerm = nil;
+		}
+	|	clause_start clause T_DOT
+		{
+			currentTerm = $2;
+			[currentTerm setVariableTable: variableTable];
+			clearLookaheadToken();
+			
+			TRACE_RULE("clause_start clause T_DOT", currentTerm);
+		}
+	|	clause_start or_expression T_DOT
+		{
+			currentTerm = [[Clause alloc] initList: $2];
+			[currentTerm setVariableTable: variableTable];
+			clearLookaheadToken();
+			
+			TRACE_RULE("clause_start or_expression T_DOT", currentTerm);
+		}
+	;
+
+clause_start
+	:	/* empty */
+		{
+			variableTable = [[NSMutableDictionary alloc] init];
+		}
+	;
+
+clause
+	:	T_IF_OP or_expression
+		{
+			id	listTerm;
+			
+			listTerm = [[ListTerm alloc] initTerm: nil tail: $2];
+			$$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: listTerm];
+			
+			TRACE_RULE("T_IF_OP goal_sequence", $$);
+		}
+	|	goal T_IF_OP or_expression
+		{
+			[$1 setTail: $3];
+			$$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $2]] tail: $1];
+			
+			TRACE_RULE("goal T_IF_OP goal_sequence", $$);
+		}
+	|	T_QUERY_OP or_expression
+		{
+			id	listTerm;
+			
+			listTerm = [[ListTerm alloc] initTerm: nil tail: $2];
+			$$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: listTerm];
+
+			TRACE_RULE("T_QUERY_OP goal_sequence", $$);
+		}
+	|	goal T_EXPRESSION_RULE_OP or_expression
+	;
+
+clause_term
+	:	clause
+		{
+			$$ = [[ListTerm alloc] initTerm: $1 tail: nil];
+		}
+	|	or_expression
+		{
+			$$ = $1;
+		}
+	;
+
+or_expression
+	:	goal_sequence T_OR_OP or_expression
+		{
+			id	infixExpression;
+			 
+			[$1 setTail: $3];
+			infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
+			$$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
+			
+			TRACE_RULE("goal_sequence T_OR_OP or_expression", $$);
+		}
+	|	goal_sequence
+	;
+
+goal_sequence
+	:	goal
+		{
+			TRACE_RULE("goal", $$);
+		}
+	|	goal T_COMMA goal_sequence
+		{
+			id	infixExpression;
+			
+			[$1 setTail: $3];
+			infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
+			$$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
+			
+			TRACE_RULE("goal T_COMMA goal_sequence", $$);
+		}
+	|	goal_sequence T_IMPLY_OP goal_sequence T_OR_OP goal_sequence
+		{
+			id	ifExpression;
+			id	orExpression;
+			id	listTerm;
+			
+			[$3 setTail: $5];
+			orExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $4] tail: $3];
+			listTerm = [[ListTerm alloc] initTerm: orExpression tail: nil];
+			
+			[$1 setTail: listTerm];
+			ifExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
+			$$ = [[ListTerm alloc] initTerm: ifExpression tail: nil];
+			
+			TRACE_RULE("goal_sequence T_IMPLY_OP goal_sequence", $$);
+		}
+	|	goal_sequence T_IMPLY_OP goal_sequence
+		{
+			id	ifExpression;
+			
+			[$1 setTail: $3];
+			ifExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
+			$$ = [[ListTerm alloc] initTerm: ifExpression tail: nil];
+			
+			TRACE_RULE("goal_sequence T_IMPLY_OP goal_sequence", $$);
+		}
+	;
+	
+arg_sequence
+	:	goal
+		{
+			TRACE_RULE("goal", $$);
+		}
+	|	goal T_COMMA arg_sequence
+		{
+			[$1 setTail: $3];
+			
+			TRACE_RULE("goal T_COMMA arg_sequence", $$);
+		}
+	;
+
+goal
+	:	T_LPAREN clause_term T_RPAREN
+		{
+			$$ = $2;
+			TRACE_RULE("T_LPAREN clause_term T_RPAREN", $$);
+		}
+	|	T_IDENTIFIER structure
+		{
+			id	structure;
+
+			structure = [[Structure alloc] initHead: [NSString stringWithUTF8String: $1] tail: $2];
+			$$ = [[ListTerm alloc] initTerm: structure tail: nil];
+			
+			TRACE_RULE("T_IDENTIFIER structure", $$);
+		}
+	|	variable structure
+		{
+			id	structure;
+			
+			structure = [[Structure alloc] initTerm: $1 tail: $2];
+			$$ = [[ListTerm alloc] initTerm: structure tail: nil];
+			
+			TRACE_RULE("variable structure", $$);
+		}
+	|	goal infix_op goal
+		{
+			id	infixExpression;
+			
+			[$1 setTail: $3];
+			infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
+			$$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
+			
+			TRACE_RULE("goal infix_op goal", $$);
+		}
+	|	T_NOT_OP goal
+		{
+			id	prefixExpression;
+			
+			prefixExpression = [[PrefixExpression alloc] initHead: [NSString stringWithUTF8String: $1] tail: $2];
+			$$ = [[ListTerm alloc] initTerm: prefixExpression tail: nil];
+
+			TRACE_RULE("T_NOT_OP goal", $$);
+		}
+	|	T_IDENTIFIER
+		{
+			$$ = [[ListTerm alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: nil];
+			TRACE_RULE("T_IDENTIFIER", $$);
+		}
+	|	list
+		{
+			TRACE_RULE("list", $$);
+		}
+	|	numeric_literal
+		{
+			$$ = [[ListTerm alloc] initTerm: [[NumericTerm alloc] initNumeric: $1] tail: nil];
+			TRACE_RULE("numeric_literal", $$);
+		}
+	|	string_literal
+		{
+			$$ = [[ListTerm alloc] initTerm: $1 tail: nil];
+			TRACE_RULE("string_literal", $$);
+		}
+	|	variable
+		{
+			$$ = [[ListTerm alloc] initTerm: $1 tail: nil];
+			TRACE_RULE("variable", $$);
+		}
+	;
+
+infix_op
+	:	T_EQ_OP
+	|	T_NE_OP
+	|	T_LT_OP
+	|	T_GT_OP
+	|	T_LE_OP
+	|	T_GE_OP
+	| 	T_STRICT_EQ_OP
+	|	T_STRICT_NE_OP
+	|	T_UNIV_OP
+	|	T_INFIX_OP
+	|	T_PLUS_OP
+	|	T_MINUS_OP
+	|	T_DIV_OP
+	|	T_MULT_OP
+	|	T_MOD_OP
+	|	T_IS_OP
+	;
+
+variable
+	:	T_VARIABLE
+		{
+			$$ = addNamedVariable($1);
+			TRACE_RULE("T_VARIABLE", $$);
+		}
+	|	T_ANONYMOUS_VARIABLE
+		{
+			$$ = [[[VariableTerm alloc] init] retain];
+			TRACE_RULE("T_ANONYMOUS_VARIABLE", $$);
+		}
+	;
+	
+numeric_literal
+	:	T_NUMERIC_LIT
+	|	T_MINUS_OP T_NUMERIC_LIT
+		{
+			$$ = ($2 * -1);
+		}
+	|	T_PLUS_OP T_NUMERIC_LIT
+		{
+			$$ = $2;
+		}
+	;
+
+string_literal
+	:	T_STRING_LIT
+		{
+			int		index;
+			id		listTerm;
+			
+			for (	index = strlen($1) - 1, listTerm = nil; 
+					index >= 0; 
+					index-- ) 
+			{
+				listTerm = [	[ListTerm alloc] 
+									initTerm: [[NumericTerm alloc] initNumeric: $1[index]] 
+									tail: listTerm ];
+			}
+			
+			$$ = listTerm;
+		}
+	;
+	
+structure
+	:	T_LPAREN arg_sequence T_RPAREN
+		{
+			$$ = $2;
+			TRACE_RULE("T_LPAREN arg_sequence T_RPAREN", $$);
+		}
+	;
+	
+list
+	:	T_SQUARE_LPAREN list_sequence
+		{
+			$$ = [[ListTerm alloc] initTerm: $2 tail: nil];
+			TRACE_RULE("T_SQUARE_LPAREN list_sequence", $$);
+		}
+	|	T_SQUARE_LPAREN T_SQUARE_RPAREN
+		{
+			$$ = [[ListTerm alloc] initTerm: [[ListTerm alloc] init] tail: nil];
+			TRACE_RULE("T_SQUARE_LPAREN T_SQUARE_RPAREN", $$);
+		}
+	|	T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN
+		{
+			[$3 setTail: $5];
+			$$ = [[ListTerm alloc] initTerm: $3 tail: nil];
+			
+			TRACE_RULE("T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
+		}
+	|	T_DOT T_LPAREN goal T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN
+		{
+			$$ = [[ListTerm alloc] initTerm: $3 tail: nil];
+			TRACE_RULE("T_DOT T_LPAREN goal T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
+		}
+	;
+		
+list_sequence
+	:	goal T_SQUARE_RPAREN
+		{
+			id	listTerm;
+			
+			listTerm = [[ListTerm alloc] initTerm: nil tail: nil];
+			[$1 setTail: listTerm];
+			$$ = $1;
+			
+			TRACE_RULE("goal T_SQUARE_RPAREN", $$);
+		}
+	|	goal T_HEAD_TAIL_SEPARATOR list_end
+		{
+			[$1 setTail: $3];
+			TRACE_RULE("goal T_HEAD_TAIL_SEPARATOR list_end", $$);
+		}
+	|	goal T_COMMA list_sequence
+		{
+			[$1 setTail: $3];
+			TRACE_RULE("goal T_COMMA list_sequence", $$);
+		}
+	;
+	
+list_end
+	:	list T_SQUARE_RPAREN
+		{
+			id	listTerm;
+			
+			listTerm = [[ListTerm alloc] initTerm: nil tail: nil];
+			[$1 setTail: listTerm];
+			$$ = $1;
+
+			TRACE_RULE("list T_SQUARE_RPAREN", $$);
+		}
+	|	variable T_SQUARE_RPAREN
+		{
+			TRACE_RULE("variable T_SQUARE_RPAREN", $$);
+		}
+	;
+
+list_pair
+	:	T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN
+		{
+			[$3 setTail: $5];
+			$$ = $3;
+			
+			TRACE_RULE("T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
+		}
+	|	T_DOT T_LPAREN goal T_COMMA T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN
+		{
+			id	listTerm;
+			
+			listTerm = [[ListTerm alloc] initTerm: nil tail: nil];
+			[$3 setTail: listTerm];
+			$$ = $3;
+			
+			TRACE_RULE("T_DOT T_LPAREN goal T_COMMA T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
+		}
+	;
+		
+standard_goal_sequence
+	:	standard_goal
+	|	standard_goal_sequence standard_goal
+	;
+	
+standard_goal
+	:	T_IDENTIFIER
+	|	variable
+	|	T_STRING_LIT
+	|	numeric_literal
+	|	standard_list
+	;
+	
+standard_list
+	:	T_STANDARD_LPAREN standard_list_sequence
+	|	T_STANDARD_LPAREN T_STANDARD_RPAREN
+	;
+		
+standard_list_sequence
+	:	standard_goal T_STANDARD_RPAREN
+	|	standard_goal T_HEAD_TAIL_SEPARATOR standard_list_end
+	|	standard_goal standard_list_sequence
+	;
+	
+standard_list_end
+	:	standard_list T_STANDARD_RPAREN
+	|	variable T_STANDARD_RPAREN
+	;
+		
+%%
+
+id
+CurrentTerm()
+{
+	return currentTerm;
+}
+
+id
+addNamedVariable(char * name)
+{
+	NSString * variableName = [NSString stringWithUTF8String: name];
+	if ([variableTable objectForKey: variableName] == nil) {
+		[variableTable setValue: [[[NamedVariable alloc] initVariable: variableName] retain] forKey: variableName];
+	}
+	
+	return (NamedVariable *) [[variableTable objectForKey: variableName] retain];
+}
+
+/*--------------------------------------------------------------------------*/
+/* yywrap()																	*/
+/*--------------------------------------------------------------------------*/
+
+int
+yywrap()
+{	
+	return YES;
+}
+
+
+/*--------------------------------------------------------------------------*/
+/* clearLookaheadToken()
+/*	- discards both the yacc lookahead token and the lex lookahead buffer.
+/*--------------------------------------------------------------------------*/
+
+static void
+clearLookaheadToken(void)
+{
+	yyclearin;
+	ResetLex();
+
+	return;
+}
+
