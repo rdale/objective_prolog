@@ -99,23 +99,23 @@ enum ProofState {
  *        - a hash table of variable names against former variable bindings.
  *----------------------------------------------------------*/
  {
-    int                            goalSequence;
-    ProofTree *                    proofTree;
-    Goal *                        parentGoal;
-    NestedStructureIterator *    parentTermIterator;
-    SEL                            systemPredicate;
-    ListIterator *                argIterator;
-    ProofState                    proofState;
+    int                         goalSequence;
+    ProofTree *                 proofTree;
+    Goal *                      parentGoal;
+    NestedStructureIterator *   parentTermIterator;
+    SEL                         systemPredicate;
+    ListIterator *              argIterator;
+    ProofState                  proofState;
     NSMutableArray *            relation;
-    int                            currentClause;
+    int                         currentClause;
     Clause *                    clause;
-    int                            currentTerm;
-    NestedStructureIterator *    termIterator;
+    int                         currentTerm;
+    NestedStructureIterator *   termIterator;
     NSMutableArray *            subGoals;
-    NSMutableDictionary *        variableTable;
+    NSMutableDictionary *       variableTable;
     NSMutableArray *            localStorage;
     NSMutableArray *            trail;
-    int                            currentDepth;
+    int                         currentDepth;
 }
 
 - initGoal: aRelation proofTree: aProofTree parent: aGoal goalDepth: (int) depth;

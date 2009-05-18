@@ -19,6 +19,8 @@
     const char * buffer = [temp cStringUsingEncoding: NSASCIIStringEncoding];
     va_end(args);
     [self write: (const uint8_t *) buffer maxLength: strlen(buffer)];
+    [temp release];
+    free(buffer);
     return self;
 }
 

@@ -36,23 +36,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface ProofTree: NSObject
 
 {
-    Prolog *    database;
-    id            queryGoal;
-    id            queryPredicate;
-    jmp_buf        continuation;
+    Prolog *            database;
+    id                  queryGoal;
+    id                  queryPredicate;
+    jmp_buf             continuation;
     
-    NSInputStream *    currentInput;
-    NSString *        currentInputName;
-    int            currentInputFd;
+    NSInputStream *     currentInput;
+    NSString *          currentInputName;
+    int                 currentInputFd;
     
     NSOutputStream *    currentOutput;
-    NSString *        currentOutputName;
-    int            currentOutputFd;
+    NSString *          currentOutputName;
+    int                 currentOutputFd;
     
-    long        elapsedTime;
-    NSInteger    sequence;
-    NSInteger    inferenceCount;
-    NSInteger    solutionCount;
+    long                elapsedTime;
+    NSInteger           sequence;
+    NSInteger           inferenceCount;
+    NSInteger           solutionCount;
 }
 
 - initQuery: queryClause database: aDatabase tracing: (BOOL) traceOption;
