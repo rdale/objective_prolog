@@ -1,11 +1,11 @@
 /*
-	startup.pl
-	
-	Author:	Richard Dale
-	Date:	Jul 1997
-	Copyright (c) 1993-1997 Richard Dale.
-	
-	$Header$
+    startup.pl
+    
+    Author:    Richard Dale
+    Date:    Jul 1997
+    Copyright (c) 1993-1997 Richard Dale.
+    
+    $Header$
 */
 
 /*
@@ -30,7 +30,7 @@ list(L) :- nonvar(L), L = [_ | _].
 
 member(X, [X | _]).
 member(X, [_ | T]) :-
-	member(X, T).
+    member(X, T).
 
 not(P) :- P, !, fail.
 not(P).

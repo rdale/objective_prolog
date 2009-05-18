@@ -25,16 +25,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface ListIterator: NSObject
 
 {
-	ListTerm *	listTerm;
-	Goal *		initialEnvironment;
-	
-	ListTerm *	currentListTerm;
-	Goal *		currentListEnvironment;
-	
-	id			currentItem;
-	Goal *		currentEnvironment;
-	
-	NSUInteger	index;
+    ListTerm *    listTerm;
+    Goal *        initialEnvironment;
+    
+    ListTerm *    currentListTerm;
+    Goal *        currentListEnvironment;
+    
+    id            currentItem;
+    Goal *        currentEnvironment;
+    
+    NSUInteger    index;
 }
 
 - initList: aList in: anEnvironment;

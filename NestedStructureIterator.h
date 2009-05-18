@@ -23,7 +23,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface NestedStructureIterator : ListIterator
 
 {
-	NSString *		functionName;
+    NSString *        functionName;
 }
 
 - initList: aTerm in: anEnvironment functor: (NSString *) aName;

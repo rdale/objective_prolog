@@ -28,60 +28,60 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initFunction: (NSString *) name
 {
-	NSString *		methodName;
-	
-	[super init];
-	functionName = [name retain];
-	
-	methodName = [NSString stringWithFormat: @"_%@", name];
-	selectorForPredicate = NSSelectorFromString(methodName);
-	[methodName release];
-	
-	return self;
+    NSString *        methodName;
+    
+    [super init];
+    functionName = [name retain];
+    
+    methodName = [NSString stringWithFormat: @"_%@", name];
+    selectorForPredicate = NSSelectorFromString(methodName);
+    [methodName release];
+    
+    return self;
 }
 
 - (NSString *) functionName
 {
-	return functionName;
+    return functionName;
 }
 
 - (SEL) selectorForPredicate
 {
-	return selectorForPredicate;
+    return selectorForPredicate;
 }
 
 - (BOOL) isEqual: value
 {
-	if ([value respondsToSelector: @selector(functionName)]) {
-		return [[self functionName] isEqualToString: [value functionName]];
-	} else {
-		return NO;
-	}
+    if ([value respondsToSelector: @selector(functionName)]) {
+        return [[self functionName] isEqualToString: [value functionName]];
+    } else {
+        return NO;
+    }
 }
 
 - printValue: goal output: (NSOutputStream *) stream;
 {
-	[self printForDebugger: stream];
-	return self;
+    [self printForDebugger: stream];
+    return self;
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream;
 {
-	if (	[[NSCharacterSet uppercaseLetterCharacterSet] characterIsMember: [functionName characterAtIndex: 0]]
-			|| [functionName isEqualToString: LIST_FUNCTOR] ) 
-	{
-		[stream printWithFormat: @"'%@'", functionName];
-	} else {
-		[stream printWithFormat: @"%@", functionName];
-	}
+    if (    [[NSCharacterSet uppercaseLetterCharacterSet] characterIsMember: [functionName characterAtIndex: 0]]
+            || [functionName isEqualToString: LIST_FUNCTOR] ) 
+    {
+        [stream printWithFormat: @"'%@'", functionName];
+    } else {
+        [stream printWithFormat: @"%@", functionName];
+    }
 
-	return;
+    return;
 }
 
 - (void) dealloc
 {
-	[functionName release];
-	[super dealloc];
+    [functionName release];
+    [super dealloc];
 }
 
 @end

@@ -26,23 +26,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - init
 {
-	[super init];
-	return self;
+    [super init];
+    return self;
 }
 
 - (void) dealloc
 {
-	[super dealloc];
+    [super dealloc];
 }
 
 - (NSString *) variableName
 {
-	return ANONYMOUS_VARIABLE_NAME;
+    return ANONYMOUS_VARIABLE_NAME;
 }
 
 - (NSString *) description
 {
-	return ANONYMOUS_VARIABLE_NAME;
+    return ANONYMOUS_VARIABLE_NAME;
 }
 
 @end

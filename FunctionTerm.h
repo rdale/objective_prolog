@@ -23,8 +23,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface FunctionTerm : Term
 
 {
-	NSString *		functionName;
-	SEL		selectorForPredicate;
+    NSString *        functionName;
+    SEL        selectorForPredicate;
 }
 
 - initFunction: (NSString *) name;

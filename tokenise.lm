@@ -1,19 +1,19 @@
 %{
 
 /*
-	tokenise.l
-	
-	Author:	Richard Dale
-	Date:	28/01/93
-	Copyright (c) 1993-2009 Richard Dale.
-	
+    tokenise.l
+    
+    Author:    Richard Dale
+    Date:    28/01/93
+    Copyright (c) 1993-2009 Richard Dale.
+    
 */
 
-#undef 	 input
-#undef	 output
+#undef      input
+#undef     output
 
-#ifdef	ECHO
-#undef	ECHO
+#ifdef    ECHO
+#undef    ECHO
 #endif
 
 #include <sys/types.h>
@@ -28,520 +28,520 @@
 #include "prolog.h"
 #include "y.tab.h"
 
-#define output(c)			putc(c, yyout)
+#define output(c)            putc(c, yyout)
 
-extern	int		yywrap(void);
+extern    int        yywrap(void);
 
-extern void	yyerror(char * fmt, ...);
-extern void	SetStreams(NSInputStream * inStream, NSOutputStream * outStream);
+extern void    yyerror(char * fmt, ...);
+extern void    SetStreams(NSInputStream * inStream, NSOutputStream * outStream);
 extern void ResetLex(void);
-extern void	BeginEdinburghSyntax(void);
-extern void	BeginStandardSyntax(void);
-extern void	BeginSimpleSyntax(void);
+extern void    BeginEdinburghSyntax(void);
+extern void    BeginStandardSyntax(void);
+extern void    BeginSimpleSyntax(void);
 
-// static	int				input(void);
+// static    int                input(void);
 
-static NSInputStream *	inputStream;
-static NSOutputStream *	outputStream;
-static int			commentContext;
-static BOOL			lexIsReset;
+static NSInputStream *    inputStream;
+static NSOutputStream *    outputStream;
+static int            commentContext;
+static BOOL            lexIsReset;
 
-	
+    
 #define YY_INPUT(buf, result, max_size) \
 { \
     if (lexIsReset) { \
-		result = YY_NULL; \
-		lexIsReset = NO; \
-	} else { \
-		NSInteger bytesRead = [inputStream read: (uint8_t *) buf maxLength: (NSUInteger) 1]; \
-		result = (bytesRead < 1) ? YY_NULL : bytesRead; \
-	} \
+        result = YY_NULL; \
+        lexIsReset = NO; \
+    } else { \
+        NSInteger bytesRead = [inputStream read: (uint8_t *) buf maxLength: (NSUInteger) 1]; \
+        result = (bytesRead < 1) ? YY_NULL : bytesRead; \
+    } \
 }
-	
+    
 %}
 
 %START COMMENT EDINBURGH_SYNTAX STANDARD_SYNTAX SIMPLE_SYNTAX
 
-WHITE_SPACE		[ \t]
+WHITE_SPACE        [ \t]
 
 %%
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	ALL SYNTAXES.															*/
+/*    ALL SYNTAXES.                                                            */
 /*--------------------------------------------------------------------------*/
 %}
 
 %{
 /*--------------------------------------------------------------------------*/
-/* Comment																	*/
+/* Comment                                                                    */
 /*--------------------------------------------------------------------------*/
 %}
 
 "%"[^\n]* {
-	;
+    ;
 }
 
 \/\* {
-	commentContext = YYSTATE;
-	BEGIN COMMENT;
+    commentContext = YYSTATE;
+    BEGIN COMMENT;
 }
 
 <COMMENT>[^/*]* {
-	;
+    ;
 }
 
 <COMMENT>[/][^/*]* {
-	;
+    ;
 }
 
 <COMMENT>[*][^/][^/*]* {
-	;
+    ;
 }
 
 \*\/ {
-	BEGIN commentContext;
+    BEGIN commentContext;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Common to all syntaxes.													*/
+/*    Common to all syntaxes.                                                    */
 /*--------------------------------------------------------------------------*/
 %}
 
 <EDINBURGH_SYNTAX>"(" {
-	return T_LPAREN;
+    return T_LPAREN;
 }
 
 <EDINBURGH_SYNTAX>")" {
-	return T_RPAREN;
+    return T_RPAREN;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Identifiers and literals												*/
+/*    Identifiers and literals                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
 [0-9]+ {
-	yylval.intValue = atoi(yytext);
-	return T_NUMERIC_LIT;
+    yylval.intValue = atoi(yytext);
+    return T_NUMERIC_LIT;
 }
 
 \"[^\n\"]*\"  {
-	yylval.stringValue = malloc(strlen(yytext) - 1);
-	(void) memcpy(yylval.stringValue, yytext + 1, strlen(yytext) - 2);
-	yylval.stringValue[strlen(yytext) - 2] = '\0';
-	return T_STRING_LIT;
+    yylval.stringValue = malloc(strlen(yytext) - 1);
+    (void) memcpy(yylval.stringValue, yytext + 1, strlen(yytext) - 2);
+    yylval.stringValue[strlen(yytext) - 2] = '\0';
+    return T_STRING_LIT;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	EDINBURGH SYNTAX														*/
+/*    EDINBURGH SYNTAX                                                        */
 /*--------------------------------------------------------------------------*/
 %}
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	©is© phrase.															*/
+/*    ©is© phrase.                                                            */
 /*--------------------------------------------------------------------------*/
 %}
 
-<EDINBURGH_SYNTAX>"*" 	{
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_MULT_OP;
+<EDINBURGH_SYNTAX>"*"     {
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_MULT_OP;
 }
 
 <EDINBURGH_SYNTAX>"+" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_PLUS_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_PLUS_OP;
 }
 
 <EDINBURGH_SYNTAX>"-" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_MINUS_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_MINUS_OP;
 }
 
 <EDINBURGH_SYNTAX>"/" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_DIV_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_DIV_OP;
 }
 
 <EDINBURGH_SYNTAX>"mod" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_MOD_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_MOD_OP;
 }
 
-<EDINBURGH_SYNTAX>"is"	 {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IS_OP;
+<EDINBURGH_SYNTAX>"is"     {
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IS_OP;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Delimiters and operators												*/
+/*    Delimiters and operators                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
 <EDINBURGH_SYNTAX>"(" {
-	return T_LPAREN;
+    return T_LPAREN;
 }
 
 <EDINBURGH_SYNTAX>")" {
-	return T_RPAREN;
+    return T_RPAREN;
 }
 
 <EDINBURGH_SYNTAX>"," {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_COMMA;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_COMMA;
 }
 
 <EDINBURGH_SYNTAX>";" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_OR_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_OR_OP;
 }
 
 <EDINBURGH_SYNTAX>"->" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IMPLY_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IMPLY_OP;
 }
 
 <EDINBURGH_SYNTAX>"<" {
-	yylval.stringValue = malloc(strlen("_lt") + 1);
-	(void) strcpy(yylval.stringValue, "_lt");
-	return T_LT_OP;
+    yylval.stringValue = malloc(strlen("_lt") + 1);
+    (void) strcpy(yylval.stringValue, "_lt");
+    return T_LT_OP;
 }
 
 <EDINBURGH_SYNTAX>"=" {
-	yylval.stringValue = malloc(strlen("_eq") + 1);
-	(void) strcpy(yylval.stringValue, "_eq");
-	return T_EQ_OP;
+    yylval.stringValue = malloc(strlen("_eq") + 1);
+    (void) strcpy(yylval.stringValue, "_eq");
+    return T_EQ_OP;
 }
 
 <EDINBURGH_SYNTAX>"=.." {
-	yylval.stringValue = malloc(strlen("_univ") + 1);
-	(void) strcpy(yylval.stringValue, "_univ");
-	return T_UNIV_OP;
+    yylval.stringValue = malloc(strlen("_univ") + 1);
+    (void) strcpy(yylval.stringValue, "_univ");
+    return T_UNIV_OP;
 }
 
 <EDINBURGH_SYNTAX>"=<" {
-	yylval.stringValue = malloc(strlen("_le") + 1);
-	(void) strcpy(yylval.stringValue, "_le");
-	return T_LE_OP;
+    yylval.stringValue = malloc(strlen("_le") + 1);
+    (void) strcpy(yylval.stringValue, "_le");
+    return T_LE_OP;
 }
 
 <EDINBURGH_SYNTAX>"==" {
-	yylval.stringValue = malloc(strlen("_stricteq") + 1);
-	(void) strcpy(yylval.stringValue, "_stricteq");
-	return T_STRICT_EQ_OP;
+    yylval.stringValue = malloc(strlen("_stricteq") + 1);
+    (void) strcpy(yylval.stringValue, "_stricteq");
+    return T_STRICT_EQ_OP;
 }
 
 <EDINBURGH_SYNTAX>"=:=" {
-	yylval.stringValue = malloc(strlen("_strictequal") + 1);
-	(void) strcpy(yylval.stringValue, "_strictequal");
-	return T_STRICT_EQ_OP;
+    yylval.stringValue = malloc(strlen("_strictequal") + 1);
+    (void) strcpy(yylval.stringValue, "_strictequal");
+    return T_STRICT_EQ_OP;
 }
 
 <EDINBURGH_SYNTAX>">" {
-	yylval.stringValue = malloc(strlen("_gt") + 1);
-	(void) strcpy(yylval.stringValue, "_gt");
-	return T_GT_OP;
+    yylval.stringValue = malloc(strlen("_gt") + 1);
+    (void) strcpy(yylval.stringValue, "_gt");
+    return T_GT_OP;
 }
 
 <EDINBURGH_SYNTAX>">=" {
-	yylval.stringValue = malloc(strlen("_ge") + 1);
-	(void) strcpy(yylval.stringValue, "_ge");
-	return T_GE_OP;
+    yylval.stringValue = malloc(strlen("_ge") + 1);
+    (void) strcpy(yylval.stringValue, "_ge");
+    return T_GE_OP;
 }
 
 <EDINBURGH_SYNTAX>"\\=" {
-	yylval.stringValue = malloc(strlen("_ne") + 1);
-	(void) strcpy(yylval.stringValue, "_ne");
-	return T_NE_OP;
+    yylval.stringValue = malloc(strlen("_ne") + 1);
+    (void) strcpy(yylval.stringValue, "_ne");
+    return T_NE_OP;
 }
 
 <EDINBURGH_SYNTAX>"\\==" {
-	yylval.stringValue = malloc(strlen("_notstricteq") + 1);
-	(void) strcpy(yylval.stringValue, "_notstricteq");
-	return T_STRICT_NE_OP;
+    yylval.stringValue = malloc(strlen("_notstricteq") + 1);
+    (void) strcpy(yylval.stringValue, "_notstricteq");
+    return T_STRICT_NE_OP;
 }
 
 <EDINBURGH_SYNTAX>"." {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_DOT;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_DOT;
 }
 
 <EDINBURGH_SYNTAX>"{" {
-	return T_CURLY_LPAREN;
+    return T_CURLY_LPAREN;
 }
 
 <EDINBURGH_SYNTAX>"}" {
-	return T_CURLY_RPAREN;
+    return T_CURLY_RPAREN;
 }
 
 <EDINBURGH_SYNTAX>":-" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IF_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IF_OP;
 }
 
 <EDINBURGH_SYNTAX>"?-" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_QUERY_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_QUERY_OP;
 }
 
 <EDINBURGH_SYNTAX>"-->" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_EXPRESSION_RULE_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_EXPRESSION_RULE_OP;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Built-in goals															*/
+/*    Built-in goals                                                            */
 /*--------------------------------------------------------------------------*/
 %}
 
 <EDINBURGH_SYNTAX>"!" {
-	yylval.stringValue = malloc(strlen("_cut") + 1);
-	(void) strcpy(yylval.stringValue, "_cut");
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen("_cut") + 1);
+    (void) strcpy(yylval.stringValue, "_cut");
+    return T_IDENTIFIER;
 }
 
 <EDINBURGH_SYNTAX>"not" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_NOT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_NOT_OP;
 }
 
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Lists																	*/
+/*    Lists                                                                    */
 /*--------------------------------------------------------------------------*/
 %}
 
 
 <EDINBURGH_SYNTAX>"|" {
-	return T_HEAD_TAIL_SEPARATOR;
+    return T_HEAD_TAIL_SEPARATOR;
 }
 
 <EDINBURGH_SYNTAX>"[" {
-	return T_SQUARE_LPAREN;
+    return T_SQUARE_LPAREN;
 }
 
 <EDINBURGH_SYNTAX>"]" {
-	return T_SQUARE_RPAREN;
+    return T_SQUARE_RPAREN;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Identifiers																*/
+/*    Identifiers                                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
 <EDINBURGH_SYNTAX>\'[^\n\']*\' {
-	yylval.stringValue = malloc(strlen(yytext) - 1);
-	(void) memcpy(yylval.stringValue, yytext + 1, strlen(yytext) - 2);
-	yylval.stringValue[strlen(yytext) - 2] = '\0';
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen(yytext) - 1);
+    (void) memcpy(yylval.stringValue, yytext + 1, strlen(yytext) - 2);
+    yylval.stringValue[strlen(yytext) - 2] = '\0';
+    return T_IDENTIFIER;
 }
 
 <EDINBURGH_SYNTAX>[a-z][a-zA-Z0-9_]* {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IDENTIFIER;
 }
 
 <EDINBURGH_SYNTAX>[-+*/^<>=`~:.?@#$&\\]+ {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IDENTIFIER;
 }
 
 <EDINBURGH_SYNTAX>_ {
-	return T_ANONYMOUS_VARIABLE;
+    return T_ANONYMOUS_VARIABLE;
 }
 
 <EDINBURGH_SYNTAX>[A-Z_][a-zA-Z0-9_]* {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_VARIABLE;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_VARIABLE;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	STANDARD SYNTAX															*/
+/*    STANDARD SYNTAX                                                            */
 /*--------------------------------------------------------------------------*/
 %}
 
 <STANDARD_SYNTAX>"(" {
-	return T_STANDARD_LPAREN;
+    return T_STANDARD_LPAREN;
 }
 
 <STANDARD_SYNTAX>"[" {
-	return T_STANDARD_LPAREN;
+    return T_STANDARD_LPAREN;
 }
 
 <STANDARD_SYNTAX>")" {
-	return T_STANDARD_RPAREN;
+    return T_STANDARD_RPAREN;
 }
 
 <STANDARD_SYNTAX>"]" {
-	return T_STANDARD_RPAREN;
+    return T_STANDARD_RPAREN;
 }
 
 <STANDARD_SYNTAX>"|" {
-	return T_HEAD_TAIL_SEPARATOR;
+    return T_HEAD_TAIL_SEPARATOR;
 }
 
 <STANDARD_SYNTAX>".." {
-	return T_HEAD_TAIL_SEPARATOR;
+    return T_HEAD_TAIL_SEPARATOR;
 }
 
 <STANDARD_SYNTAX>"@" {
-	return T_APPLY_PAIR_CONSTRUCTOR;
+    return T_APPLY_PAIR_CONSTRUCTOR;
 }
 
 <STANDARD_SYNTAX>"<" {
-	return T_BEGIN_TUPLE;
+    return T_BEGIN_TUPLE;
 }
 
 <STANDARD_SYNTAX>">" {
-	return T_END_TUPLE;
+    return T_END_TUPLE;
 }
 
 <STANDARD_SYNTAX>"!" {
-	yylval.stringValue = malloc(strlen("!") + 1);
-	(void) strcpy(yylval.stringValue, "!");
-	return T_FIND_FIRST_SOLUTION;
+    yylval.stringValue = malloc(strlen("!") + 1);
+    (void) strcpy(yylval.stringValue, "!");
+    return T_FIND_FIRST_SOLUTION;
 }
 
 <STANDARD_SYNTAX>"/" {
-	yylval.stringValue = malloc(strlen("_cut") + 1);
-	(void) strcpy(yylval.stringValue, "_cut");
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen("_cut") + 1);
+    (void) strcpy(yylval.stringValue, "_cut");
+    return T_IDENTIFIER;
 }
 
 <STANDARD_SYNTAX>"{" {
-	return T_CURLY_LPAREN;
+    return T_CURLY_LPAREN;
 }
 
 <STANDARD_SYNTAX>"}" {
-	return T_CURLY_RPAREN;
+    return T_CURLY_RPAREN;
 }
 
 <STANDARD_SYNTAX>"+" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_PLUS_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_PLUS_OP;
 }
 
 <STANDARD_SYNTAX>"*" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_MULT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_MULT_OP;
 }
 
 <STANDARD_SYNTAX>"//" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_QUOTIENT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_QUOTIENT_OP;
 }
 
 <STANDARD_SYNTAX>"/\\" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_LOGICAL_AND_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_LOGICAL_AND_OP;
 }
 
 <STANDARD_SYNTAX>"\\/" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_LOGICAL_OR_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_LOGICAL_OR_OP;
 }
 
 <STANDARD_SYNTAX>"\\" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_LOGICAL_COMPLEMENT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_LOGICAL_COMPLEMENT_OP;
 }
 
 <STANDARD_SYNTAX>">>" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_SHIFT_RIGHT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_SHIFT_RIGHT_OP;
 }
 
 <STANDARD_SYNTAX>"<<" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_SHIFT_LEFT_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_SHIFT_LEFT_OP;
 }
 
 <STANDARD_SYNTAX>"==" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_EQ_OP;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_EQ_OP;
 }
 
 <STANDARD_SYNTAX>"?" {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_EVAL_ATOM_LIST;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_EVAL_ATOM_LIST;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Identifiers and literals												*/
+/*    Identifiers and literals                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
 <STANDARD_SYNTAX>[0-9]+"."[0-9]*[eE]-?[0-9]+  {
-	return T_FLOATING_POINT_LITERAL;
+    return T_FLOATING_POINT_LITERAL;
 }
 
 <STANDARD_SYNTAX>[0-9]+"."[0-9]* {
-	return T_FLOATING_POINT_LITERAL;
+    return T_FLOATING_POINT_LITERAL;
 }
 
 <STANDARD_SYNTAX>_[a-zA-Z0-9_]+ {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_VARIABLE;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_VARIABLE;
 }
 
 <STANDARD_SYNTAX>[a-zA-Z][a-zA-Z0-9_-]* {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IDENTIFIER;
 }
 
 <STANDARD_SYNTAX>[!#$£$©=^~\@`;:,./+*?-]+ {
-	yylval.stringValue = malloc(strlen(yytext) + 1);
-	(void) strcpy(yylval.stringValue, yytext);
-	return T_IDENTIFIER;
+    yylval.stringValue = malloc(strlen(yytext) + 1);
+    (void) strcpy(yylval.stringValue, yytext);
+    return T_IDENTIFIER;
 }
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Whitespace																*/
+/*    Whitespace                                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
 {WHITE_SPACE} {
-	;
+    ;
 }
 
 [\n] {
@@ -550,81 +550,81 @@ WHITE_SPACE		[ \t]
 
 %{
 /*--------------------------------------------------------------------------*/
-/*	Catch-all																*/
+/*    Catch-all                                                                */
 /*--------------------------------------------------------------------------*/
 %}
 
-.	{
-	yyerror("UNEXPECTED CHARACTER: %c\n", yytext[0]);
+.    {
+    yyerror("UNEXPECTED CHARACTER: %c\n", yytext[0]);
 }
 
 %%
 
 /****************************************************************************/
-/* Definitions of global functions exported by this file.					*/
+/* Definitions of global functions exported by this file.                    */
 /****************************************************************************/
 
 /*--------------------------------------------------------------------------*/
-/* yyerror()																*/
-/*																			*/
+/* yyerror()                                                                */
+/*                                                                            */
 /*--------------------------------------------------------------------------*/
 
 /*VARARGS*/
 void
 yyerror(char * fmt, ...)
 {
-	va_list	args;
-	va_start(args, fmt);
-	[outputStream printWithFormat: [NSString stringWithCString: fmt], args];
-	[outputStream printWithFormat: @"\n"];
-	va_end(args);
+    va_list    args;
+    va_start(args, fmt);
+    [outputStream printWithFormat: [NSString stringWithCString: fmt], args];
+    [outputStream printWithFormat: @"\n"];
+    va_end(args);
 
-	return;
+    return;
 }
 
 /*--------------------------------------------------------------------------*/
-/* SetStreams()																*/
+/* SetStreams()                                                                */
 /*--------------------------------------------------------------------------*/
 
 void
 SetStreams(NSInputStream * inStream, NSOutputStream * outStream)
 {
-	inputStream = inStream;
-	outputStream = outStream;
-	return;
+    inputStream = inStream;
+    outputStream = outStream;
+    return;
 }
 
 void
 ResetLex(void)
 {
-//	yysptr = yysbuf;
-	YY_FLUSH_BUFFER;
-	lexIsReset = YES;
-	return;
+//    yysptr = yysbuf;
+    YY_FLUSH_BUFFER;
+    lexIsReset = YES;
+    return;
 }
 
 void
 BeginEdinburghSyntax(void)
 {
-	BEGIN EDINBURGH_SYNTAX;
-	return;
+    BEGIN EDINBURGH_SYNTAX;
+    return;
 }
 
 void
 BeginStandardSyntax(void)
 {
-	BEGIN STANDARD_SYNTAX;
-	return;
+    BEGIN STANDARD_SYNTAX;
+    return;
 }
 
 void
 BeginSimpleSyntax(void)
 {
-	BEGIN SIMPLE_SYNTAX;
-	return;
+    BEGIN SIMPLE_SYNTAX;
+    return;
 }
 
 /****************************************************************************/
-/* Definitions of static functions in this file.							*/
+/* Definitions of static functions in this file.                            */
 /****************************************************************************/
-					   
+                       

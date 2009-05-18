@@ -23,11 +23,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface Clause : InfixExpression
 
 /*
- *	- variableTable
- *		- a hash table of variable names.
+ *    - variableTable
+ *        - a hash table of variable names.
  */
 {
-	id			variableTable;
+    id            variableTable;
 }
 
 - initTerm: aTerm tail: anotherTerm;

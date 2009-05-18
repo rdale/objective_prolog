@@ -25,18 +25,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - init
 {
-	[super init];
-	return self;
+    [super init];
+    return self;
 }
 
 - (void) dealloc
 {
-	[super dealloc];
+    [super dealloc];
 }
 
 - (BOOL) isEqual: value
 {
-	return [super isEqual: value];
+    return [super isEqual: value];
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream
@@ -45,8 +45,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - printValue: goal output: (NSOutputStream *) stream
 {
-	[self printForDebugger: stream];
-	return self;
+    [self printForDebugger: stream];
+    return self;
 }
 
 @end

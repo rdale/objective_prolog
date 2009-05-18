@@ -23,9 +23,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface Binding: NSObject
 
 {
-	id		variableTerm;
-	id		reference;
-	Goal *	environment;
+    id        variableTerm;
+    id        reference;
+    Goal *    environment;
 }
 
 - initBinding: aVariable environment: (Goal *) anEnvironment;
@@ -38,7 +38,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 - dereference;
 - (BOOL) isBound;
 
-#ifdef	DEBUG
+#ifdef    DEBUG
 - unBind: (Goal *) anEnvironment output: (NSOutputStream *) stream;
 #else
 - unBind: (Goal *) anEnvironment;

@@ -22,7 +22,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 @interface NamedVariable: VariableTerm
 {
-	NSString *	variableName;
+    NSString *    variableName;
 }
 
 - initVariable: (NSString *) name;

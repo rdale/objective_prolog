@@ -21,7 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 @interface NumericTerm: Term
 
 {
-	NSInteger		intValue;
+    NSInteger        intValue;
 }
 
 - initNumeric: (int) value;

@@ -18,22 +18,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  THE SOFTWARE.
 */
 
-#define SUCCESS						(0)
-#define FAIL						(-1)
+#define SUCCESS                        (0)
+#define FAIL                        (-1)
 
-#define LIST_FUNCTOR				@"."
-#define CUT_FUNCTOR					@"!"
-#define NOT_FUNCTOR					@"not"
-#define FAIL_FUNCTOR				@"fail"
-#define OR_FUNCTOR					@";"
+#define LIST_FUNCTOR                @"."
+#define CUT_FUNCTOR                    @"!"
+#define NOT_FUNCTOR                    @"not"
+#define FAIL_FUNCTOR                @"fail"
+#define OR_FUNCTOR                    @";"
 
 /*----------------------------------------------------------
  * - Message ids for messages sent to the main thread.
- *	- MSG_UPDATE_LOG
- *		- a line of data has been written to the line buffer
- *			stream ready for display.
+ *    - MSG_UPDATE_LOG
+ *        - a line of data has been written to the line buffer
+ *            stream ready for display.
  *----------------------------------------------------------*/
-#define MSG_UPDATE_LOG	0
+#define MSG_UPDATE_LOG    0
 
-#define DIM(A)		(sizeof(A) / sizeof(*(A)))
-#define LAST_ENTRY_REF(A)	(A + (DIM(A) - 1))
+#define DIM(A)        (sizeof(A) / sizeof(*(A)))
+#define LAST_ENTRY_REF(A)    (A + (DIM(A) - 1))

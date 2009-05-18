@@ -24,38 +24,38 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - printValue: goal output: (NSOutputStream *) stream
 {
-	id	iterator;
+    id    iterator;
 
-	/***
-	[super printValue: goal output: stream];
-	return self;
-	***/
-	
-	iterator = [listTerm createIterator: goal];
-	[iterator first];
+    /***
+    [super printValue: goal output: stream];
+    return self;
+    ***/
+    
+    iterator = [listTerm createIterator: goal];
+    [iterator first];
 
-	(void) [iterator objectAtIndex: 1];
+    (void) [iterator objectAtIndex: 1];
 
-	if ([iterator currentListTerm] == nil) {
-		[stream printWithFormat: @"[]"];
-	} else {
-		[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-	}
-		
-	[stream printWithFormat: @" "];
-	(void) [iterator objectAtIndex: 0];
-	[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-	[stream printWithFormat: @" "];
+    if ([iterator currentListTerm] == nil) {
+        [stream printWithFormat: @"[]"];
+    } else {
+        [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+    }
+        
+    [stream printWithFormat: @" "];
+    (void) [iterator objectAtIndex: 0];
+    [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+    [stream printWithFormat: @" "];
 
-	(void) [iterator objectAtIndex: 2];
-	if ([iterator currentListTerm] == nil) {
-		[stream printWithFormat: @"[]"];
-	} else {
-		[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-	}
-	
-	[iterator release];
-	return self;
+    (void) [iterator objectAtIndex: 2];
+    if ([iterator currentListTerm] == nil) {
+        [stream printWithFormat: @"[]"];
+    } else {
+        [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+    }
+    
+    [iterator release];
+    return self;
 }
 
 @end

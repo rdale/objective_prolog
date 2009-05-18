@@ -33,125 +33,125 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - init
 {
-	[super init];
-	return self;
+    [super init];
+    return self;
 }
 
 - initTerm: listHead tail: (ListTerm *) listTail
 {
-	[super init];
+    [super init];
 
-	[self setHead: listHead];
-	[self setTail: listTail];
-	
-	return self;
+    [self setHead: listHead];
+    [self setTail: listTail];
+    
+    return self;
 }
 
 - (void) dealloc
 {
-	[head release];
-	[tail release];
-	[super dealloc];
+    [head release];
+    [tail release];
+    [super dealloc];
 }
 
 - createIterator: environment
 {
-	return [[ListIterator alloc] initList: self in: environment];
+    return [[ListIterator alloc] initList: self in: environment];
 }
 
 - head
 {
-	return head;
+    return head;
 }
 
 - setHead: aHead
 {
-	if (head != nil) {
-		[head release];
-	}
+    if (head != nil) {
+        [head release];
+    }
 
-	head = aHead;
-	[head retain];
-	return self;
+    head = aHead;
+    [head retain];
+    return self;
 }
 
 - tail
 {
-	return tail;
+    return tail;
 }
 
 - setTail: aTail
 {
-	if (tail != nil) {
-		[tail release];
-	}
-	
-	tail = aTail;
-	[tail retain];
-	return self;
+    if (tail != nil) {
+        [tail release];
+    }
+    
+    tail = aTail;
+    [tail retain];
+    return self;
 }
 
 
 - (void) printForDebugger: (NSOutputStream *) stream
 {
-	[stream printWithFormat: @"["];
-	[self printContentsValue: nil output: stream];
-	[stream printWithFormat: @"]"];
-	
-	return;
+    [stream printWithFormat: @"["];
+    [self printContentsValue: nil output: stream];
+    [stream printWithFormat: @"]"];
+    
+    return;
 }
 
 - printContentsForDebugger: (NSOutputStream *) stream
 {
-	return [self printContentsValue: nil output: stream];
+    return [self printContentsValue: nil output: stream];
 }
 
 - printContentsValue: goal output: (NSOutputStream *) stream
 {
-	id		iterator;
-	
-	iterator = [self createIterator: goal];
-	[iterator first];
-	
-	if (![iterator isDone]) {
-		if ([iterator currentItem] == nil) {
-			[stream printWithFormat: @"[]"];
-		} else {
-			[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-		}
-		
-		[iterator next];
-		
-		while (![iterator isDone]) {
-			[stream printWithFormat: @", "];
-				
-			if ([iterator currentItem] == nil) {
-				[stream printWithFormat: @"[]"];
-			} else {
-				[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-			}
-			
-			[iterator next];
-		}
-		
-		if ([iterator currentListTerm] != nil && ![[iterator currentListTerm] isKindOfClass: [ListTerm class]]) {		
-				[stream printWithFormat: @" | "];
-				[[iterator currentListTerm] printValue: [iterator currentListEnvironment] output: stream];
-		}	
-	}
-	
-	[iterator release];
-	
-	return self;
+    id        iterator;
+    
+    iterator = [self createIterator: goal];
+    [iterator first];
+    
+    if (![iterator isDone]) {
+        if ([iterator currentItem] == nil) {
+            [stream printWithFormat: @"[]"];
+        } else {
+            [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+        }
+        
+        [iterator next];
+        
+        while (![iterator isDone]) {
+            [stream printWithFormat: @", "];
+                
+            if ([iterator currentItem] == nil) {
+                [stream printWithFormat: @"[]"];
+            } else {
+                [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+            }
+            
+            [iterator next];
+        }
+        
+        if ([iterator currentListTerm] != nil && ![[iterator currentListTerm] isKindOfClass: [ListTerm class]]) {        
+                [stream printWithFormat: @" | "];
+                [[iterator currentListTerm] printValue: [iterator currentListEnvironment] output: stream];
+        }    
+    }
+    
+    [iterator release];
+    
+    return self;
 }
 
 - printValue: goal output: (NSOutputStream *) stream
 {
-	[stream printWithFormat: @"["];
-	[self printContentsValue: goal output: stream];
-	[stream printWithFormat: @"]"];
-	
-	return self;
+    [stream printWithFormat: @"["];
+    [self printContentsValue: goal output: stream];
+    [stream printWithFormat: @"]"];
+    
+    return self;
 }
 
 @end

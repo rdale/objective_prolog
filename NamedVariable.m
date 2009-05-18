@@ -26,57 +26,57 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initVariable: (NSString *) name
 {
-	[super init];
-	variableName = [name retain];
-	return self;
+    [super init];
+    variableName = [name retain];
+    return self;
 }
 
 - (void) dealloc
 {
-	[variableName release];
-	[super dealloc];
+    [variableName release];
+    [super dealloc];
 }
 
 - (id) copyWithZone: (NSZone *)zone
 {
-	id result = [[NamedVariable allocWithZone: zone] initVariable: variableName];
-	return result;
+    id result = [[NamedVariable allocWithZone: zone] initVariable: variableName];
+    return result;
 }
 
 - (NSString *) variableName
 {
-	return variableName;
+    return variableName;
 }
 
 - (BOOL) isEqual: term
 {
-	return [[self variableName] isEqualToString: [term variableName]];
+    return [[self variableName] isEqualToString: [term variableName]];
 }
 
 - (NSUInteger) hash
 {
-	return [[self variableName] hash];
+    return [[self variableName] hash];
 }
 
 - (NSString *) description
 {
-	return variableName;
+    return variableName;
 }
 
 - printValue: goal output: (NSOutputStream *) stream;
 {
-	if (goal == nil) {
-		[self printForDebugger: stream];
-		return self;
-	} else {
-		return [goal printVariable: self output: stream];
-	}
+    if (goal == nil) {
+        [self printForDebugger: stream];
+        return self;
+    } else {
+        return [goal printVariable: self output: stream];
+    }
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream
 {
-	[stream printWithFormat: @"%@", variableName];
-	return;
+    [stream printWithFormat: @"%@", variableName];
+    return;
 }
 
 

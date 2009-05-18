@@ -29,109 +29,109 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initBinding: aVariable environment: (Goal *) anEnvironment
 {
-	variableTerm = [aVariable retain];
-	reference = self;
-	environment = [anEnvironment retain];
+    variableTerm = [aVariable retain];
+    reference = self;
+    environment = [anEnvironment retain];
 
-	return self;
+    return self;
 }
 
 - (void) dealloc
 {
-	[variableTerm release];
-	[environment release];
-	[super dealloc];
+    [variableTerm release];
+    [environment release];
+    [super dealloc];
 }
 
 - (NSString *) variableName
 {
-	return [variableTerm variableName];
+    return [variableTerm variableName];
 }
 
 - reference
 {
-	return reference;
+    return reference;
 }
 
 - (Goal *) environment
 {
-	return environment;
+    return environment;
 }
 
 - setReference: aReference
 {
-	assert(reference == self);
+    assert(reference == self);
 
-	reference = [aReference retain];
-	return self;
+    reference = [aReference retain];
+    return self;
 }
 
 - setEnvironment: (Goal *) anEnvironment;
 {
-	Goal * temp = environment;
-	environment = [anEnvironment retain];
-	[temp release];
-	return self;
+    Goal * temp = environment;
+    environment = [anEnvironment retain];
+    [temp release];
+    return self;
 }
 
 - dereference
 {
-	if (reference == self) {
-		return self;
-	} else if ([reference respondsToSelector: @selector(dereference)]) {
-		return [reference dereference];
-	} else {
-		return self;
-	}
+    if (reference == self) {
+        return self;
+    } else if ([reference respondsToSelector: @selector(dereference)]) {
+        return [reference dereference];
+    } else {
+        return self;
+    }
 }
 
 - (BOOL) isBound
 {
-	return reference != self;
+    return reference != self;
 }
 
-#ifdef	DEBUG
+#ifdef    DEBUG
 - unBind: (Goal *) anEnvironment output: (NSOutputStream *) stream
 {
-	[anEnvironment indent: stream];
-	[stream printWithFormat: @"GOAL #%d: %@ restore -> _%ld\n", [anEnvironment goalSequence], [self variableName], (long) self];
+    [anEnvironment indent: stream];
+    [stream printWithFormat: @"GOAL #%d: %@ restore -> _%ld\n", [anEnvironment goalSequence], [self variableName], (long) self];
 #else
 - unBind: (Goal *) anEnvironment
 {
 #endif
 
-	environment = anEnvironment;
-	reference = self;
-	return self;
+    environment = anEnvironment;
+    reference = self;
+    return self;
 }
 
 - printValue: (Goal *) anEnvironment output: (NSOutputStream *) stream
 {
-	if (reference == self) {
-		[stream printWithFormat: @"_%ld", (long) self];
-	} else if (reference == nil) {
-		[stream printWithFormat: @"[]"];
-	} else {
-		[reference printValue: environment output: stream];
-	}
-	
-	return self;
+    if (reference == self) {
+        [stream printWithFormat: @"_%ld", (long) self];
+    } else if (reference == nil) {
+        [stream printWithFormat: @"[]"];
+    } else {
+        [reference printValue: environment output: stream];
+    }
+    
+    return self;
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream
 {
-#ifdef	DEBUG
-	if (reference == self) {
-		[stream printWithFormat: @"GOAL #%d: %@ -> _%ld", [environment goalSequence], [self variableName], (long) self];
-	} else if (reference == nil) {
-		[stream printWithFormat: @"GOAL #%d: %@ -> []", [environment goalSequence]];
-	} else {
-		[stream printWithFormat: @"GOAL #%d: %@ -> ", [environment goalSequence], [self variableName]];
-		[reference printValue: environment output: stream];
-	}
+#ifdef    DEBUG
+    if (reference == self) {
+        [stream printWithFormat: @"GOAL #%d: %@ -> _%ld", [environment goalSequence], [self variableName], (long) self];
+    } else if (reference == nil) {
+        [stream printWithFormat: @"GOAL #%d: %@ -> []", [environment goalSequence]];
+    } else {
+        [stream printWithFormat: @"GOAL #%d: %@ -> ", [environment goalSequence], [self variableName]];
+        [reference printValue: environment output: stream];
+    }
 #endif
-	
-	return;
+    
+    return;
 }
 
 @end

@@ -27,36 +27,36 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initNumeric: (int) value
 {
-	[super init];
-	intValue = value;
-	
-	return self;
+    [super init];
+    intValue = value;
+    
+    return self;
 }
 
 - (int) intValue
 {
-	return intValue;
+    return intValue;
 }
 
 
 - (BOOL) isEqual: value
 {
-	if ([value respondsToSelector: @selector(intValue)]) {
-		return [self intValue] == [value intValue];
-	} else {
-		return NO;
-	}
+    if ([value respondsToSelector: @selector(intValue)]) {
+        return [self intValue] == [value intValue];
+    } else {
+        return NO;
+    }
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream
 {
-	[stream printWithFormat: @"%d", intValue];
-	return;
+    [stream printWithFormat: @"%d", intValue];
+    return;
 }
 
 - (void) dealloc
 {
-	[super dealloc];
+    [super dealloc];
 }
 
 @end

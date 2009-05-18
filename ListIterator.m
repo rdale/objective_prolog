@@ -34,158 +34,158 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initList: aList in: anEnvironment
 {
-	[super init];
-	
-	listTerm = [aList retain];
-	initialEnvironment = [anEnvironment retain];
-	
-	currentListTerm = nil;
-	currentListEnvironment = nil;
-	
-	currentItem = nil;
-	currentEnvironment = nil;
-	
-	return self;
+    [super init];
+    
+    listTerm = [aList retain];
+    initialEnvironment = [anEnvironment retain];
+    
+    currentListTerm = nil;
+    currentListEnvironment = nil;
+    
+    currentItem = nil;
+    currentEnvironment = nil;
+    
+    return self;
 }
 
 
 - (void) dealloc
 {
-	[listTerm release];
-	[initialEnvironment release];
-	[super dealloc];
+    [listTerm release];
+    [initialEnvironment release];
+    [super dealloc];
 }
 
 - first
 {
-	currentListTerm = listTerm;
-	currentListEnvironment = initialEnvironment;
-	currentEnvironment = initialEnvironment;
-	index = 0;
-	
-	return self;
+    currentListTerm = listTerm;
+    currentListEnvironment = initialEnvironment;
+    currentEnvironment = initialEnvironment;
+    index = 0;
+    
+    return self;
 }
 
 - next
 {
-	Binding *	binding;
+    Binding *    binding;
 
-	currentListTerm = [currentListTerm tail];
-	
-	if ([currentListTerm isKindOfClass: [VariableTerm class]]) {
-		binding = [currentListEnvironment getBinding: currentListTerm];
-				
-		if ([binding isBound]) {
-			currentListTerm = [binding reference];
-			currentListEnvironment = [binding environment];
-			currentEnvironment = currentListEnvironment;
-		}
-	}
-	
-	index++;
-	return self;
+    currentListTerm = [currentListTerm tail];
+    
+    if ([currentListTerm isKindOfClass: [VariableTerm class]]) {
+        binding = [currentListEnvironment getBinding: currentListTerm];
+                
+        if ([binding isBound]) {
+            currentListTerm = [binding reference];
+            currentListEnvironment = [binding environment];
+            currentEnvironment = currentListEnvironment;
+        }
+    }
+    
+    index++;
+    return self;
 }
 
 - objectAtIndex: (NSUInteger) anIndex
 {
-	if (index > anIndex) {
-		[self first];
-	}
-	
-	while (index < anIndex) {
-		[self next];
-		if ([self isDone]) {
-			return nil;
-		}
-	}
-	
-	return [self currentItem];
+    if (index > anIndex) {
+        [self first];
+    }
+    
+    while (index < anIndex) {
+        [self next];
+        if ([self isDone]) {
+            return nil;
+        }
+    }
+    
+    return [self currentItem];
 }
 
 - (BOOL) isLast
 {
-	id	binding;
-	id	nextListTerm;
-	
-	if ([currentListTerm tail] == nil) {
-		return YES;
-	}
-	
-	if ([[currentListTerm tail] isKindOfClass: [VariableTerm class]]) {
-		binding = [currentListEnvironment getBinding: [currentListTerm tail]];
-		
-		if ([binding isBound]) {
-			nextListTerm = [binding reference];
-			return (	![nextListTerm isKindOfClass: [ListTerm class]]
-						|| ([nextListTerm head] == nil && [nextListTerm tail] == nil) );
-		} else {
-			return YES;
-		}
-	}
-	
-	return NO;
+    id    binding;
+    id    nextListTerm;
+    
+    if ([currentListTerm tail] == nil) {
+        return YES;
+    }
+    
+    if ([[currentListTerm tail] isKindOfClass: [VariableTerm class]]) {
+        binding = [currentListEnvironment getBinding: [currentListTerm tail]];
+        
+        if ([binding isBound]) {
+            nextListTerm = [binding reference];
+            return (    ![nextListTerm isKindOfClass: [ListTerm class]]
+                        || ([nextListTerm head] == nil && [nextListTerm tail] == nil) );
+        } else {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 - (BOOL) isDone
 {
-	return (	currentListTerm == nil
-				|| ![currentListTerm isKindOfClass: [ListTerm class]]
-				|| ([currentListTerm head] == nil && [currentListTerm tail] == nil) );
+    return (    currentListTerm == nil
+                || ![currentListTerm isKindOfClass: [ListTerm class]]
+                || ([currentListTerm head] == nil && [currentListTerm tail] == nil) );
 }
 
 - currentItem
 {
-	Binding *	binding;
+    Binding *    binding;
 
-	if ([self isDone]) {
-		return nil;
-	}
+    if ([self isDone]) {
+        return nil;
+    }
 
-	currentItem = [currentListTerm head];
-	currentEnvironment = currentListEnvironment;
-	
-	if ([currentItem isKindOfClass: [VariableTerm class]]) {
-		binding = [currentListEnvironment getBinding: currentItem];
-				
-		if ([binding isBound]) {
-			currentItem = [binding reference];
-			currentEnvironment = [binding environment];
-		} 
-	}
-	
-	return currentItem;
+    currentItem = [currentListTerm head];
+    currentEnvironment = currentListEnvironment;
+    
+    if ([currentItem isKindOfClass: [VariableTerm class]]) {
+        binding = [currentListEnvironment getBinding: currentItem];
+                
+        if ([binding isBound]) {
+            currentItem = [binding reference];
+            currentEnvironment = [binding environment];
+        } 
+    }
+    
+    return currentItem;
 }
 
 - (Goal *) currentEnvironment
 {
-	return currentEnvironment;
+    return currentEnvironment;
 }
 
 - currentListTerm
 {
-	return currentListTerm;
+    return currentListTerm;
 }
 
 - currentListEnvironment
 {
-	return currentListEnvironment;
+    return currentListEnvironment;
 }
 
 - (NSUInteger) index
 {
-	return index;
+    return index;
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream;
 {
-	if ([self isDone]) {
-		[stream printWithFormat: @"<undefined>"];
-	} else {
-		[stream printWithFormat: @"[%d]\t", index];
-		[[self currentItem] printValue: [self currentEnvironment] output: stream];
-	}
-	
-	return;
+    if ([self isDone]) {
+        [stream printWithFormat: @"<undefined>"];
+    } else {
+        [stream printWithFormat: @"[%d]\t", index];
+        [[self currentItem] printValue: [self currentEnvironment] output: stream];
+    }
+    
+    return;
 }
 
 @end

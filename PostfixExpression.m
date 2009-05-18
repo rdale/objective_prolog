@@ -24,30 +24,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - printValue: goal output: (NSOutputStream *) stream
 {
-	id	iterator;
-		
-	iterator = [listTerm createIterator: goal];
-	[iterator first];
-	 
-	if (![iterator isDone]) {
-		[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-		[iterator next];
-	}
-	
-	if (![iterator isDone]) {
-		[stream printWithFormat: @"("];
-		
-		if ([iterator currentListTerm] == nil) {
-			[stream printWithFormat: @"[]"];
-		} else {
-			[[iterator currentListTerm] printContentsValue: [iterator currentListEnvironment] output: stream];
-		}
-		
-		[stream printWithFormat: @")"];
-	}
-	
-	[iterator release];
-	return self;
+    id    iterator;
+        
+    iterator = [listTerm createIterator: goal];
+    [iterator first];
+     
+    if (![iterator isDone]) {
+        [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+        [iterator next];
+    }
+    
+    if (![iterator isDone]) {
+        [stream printWithFormat: @"("];
+        
+        if ([iterator currentListTerm] == nil) {
+            [stream printWithFormat: @"[]"];
+        } else {
+            [[iterator currentListTerm] printContentsValue: [iterator currentListEnvironment] output: stream];
+        }
+        
+        [stream printWithFormat: @")"];
+    }
+    
+    [iterator release];
+    return self;
 }
 
 @end

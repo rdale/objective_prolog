@@ -27,110 +27,110 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - init
 {
-	return [self initHead: @"," tail: nil];
+    return [self initHead: @"," tail: nil];
 }
 
 - initHead: (NSString *) aString
 {
-	return [self initHead: aString tail: nil];
+    return [self initHead: aString tail: nil];
 }
 
 - initHead: (NSString *) aString tail: aTerm
 {
-	return [self initTerm: [[FunctionTerm alloc] initFunction: aString] tail: aTerm];
+    return [self initTerm: [[FunctionTerm alloc] initFunction: aString] tail: aTerm];
 }
 
 - initTerm: aTerm tail: anotherTerm
 {
-	return [self initList: [[ListTerm alloc] initTerm: aTerm tail: anotherTerm]];
+    return [self initList: [[ListTerm alloc] initTerm: aTerm tail: anotherTerm]];
 }
 
 - initList: aListTerm
 {
-	[super init];
-	listTerm = [aListTerm retain];
-	
-	return self;
+    [super init];
+    listTerm = [aListTerm retain];
+    
+    return self;
 }
 
 - (void) dealloc
 {
-	[listTerm release];
-	[super dealloc];
+    [listTerm release];
+    [super dealloc];
 }
 
 - (ListTerm *) listTerm
 {
-	return listTerm;
-}	
+    return listTerm;
+}    
 
 - createIterator: environment
 {
-	return [listTerm createIterator: environment];
+    return [listTerm createIterator: environment];
 }
 
 - (NSString *) functionName
 {
-	if ([[listTerm head] respondsToSelector: @selector(functionName)]) {
-		return [[listTerm head] functionName];
-	}
-	
-	// [self doesNotRecognize: @selector(functionName)];
-	return nil;
+    if ([[listTerm head] respondsToSelector: @selector(functionName)]) {
+        return [[listTerm head] functionName];
+    }
+    
+    // [self doesNotRecognize: @selector(functionName)];
+    return nil;
 }
 
 - head
 {
-	return [listTerm head];
+    return [listTerm head];
 }
 
 - setHead: aTerm
 {
-	return [listTerm setHead: aTerm];
+    return [listTerm setHead: aTerm];
 }
 
 - tail
 {
-	return [listTerm tail];
+    return [listTerm tail];
 }
 
 - setTail: aTerm
 {
-	return [listTerm setTail: aTerm];
+    return [listTerm setTail: aTerm];
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream
 {
-	[self printValue: nil output: stream];
-	return;
+    [self printValue: nil output: stream];
+    return;
 }
 
 - printValue: goal output: (NSOutputStream *) stream
 {
-	id	iterator;
-		
-	iterator = [listTerm createIterator: goal];
-	[iterator first];
-	 
-	if (![iterator isDone]) {
-		[[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
-		[iterator next];
-	}
-	
-	if (![iterator isDone]) {
-		[stream printWithFormat: @"("];
-		
-		if ([iterator currentListTerm] == nil) {
-			[stream printWithFormat: @"[]"];
-		} else {
-			[[iterator currentListTerm] printContentsValue: [iterator currentListEnvironment] output: stream];
-		}
-		
-		[stream printWithFormat: @")"];
-	}
-	
-	[iterator release];
-	return self;
+    id    iterator;
+        
+    iterator = [listTerm createIterator: goal];
+    [iterator first];
+     
+    if (![iterator isDone]) {
+        [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
+        [iterator next];
+    }
+    
+    if (![iterator isDone]) {
+        [stream printWithFormat: @"("];
+        
+        if ([iterator currentListTerm] == nil) {
+            [stream printWithFormat: @"[]"];
+        } else {
+            [[iterator currentListTerm] printContentsValue: [iterator currentListEnvironment] output: stream];
+        }
+        
+        [stream printWithFormat: @")"];
+    }
+    
+    [iterator release];
+    return self;
 }
 
 @end

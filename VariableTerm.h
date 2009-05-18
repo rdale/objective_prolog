@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 #import "Term.h"
 
-#define ANONYMOUS_VARIABLE_NAME		@"_"
+#define ANONYMOUS_VARIABLE_NAME        @"_"
 
 @interface VariableTerm: Term
 {

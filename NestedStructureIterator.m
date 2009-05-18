@@ -35,93 +35,93 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initList: aTerm in: anEnvironment functor: (NSString *) aName
 {
-	[super initList: aTerm in: anEnvironment];
-	functionName = [aName retain];
-	
-	return self;
+    [super initList: aTerm in: anEnvironment];
+    functionName = [aName retain];
+    
+    return self;
 }
 
 - first
 {
-	[super first];
-	
-	if (![self isDone]) {
-		if ([self isNestedStructure: [self currentItem]]) {
-			currentListTerm = [[self currentItem] listTerm];
-			currentListEnvironment = currentEnvironment;
-			index--;
-			[super next];
-		}
-	}
-	
-	return self;
+    [super first];
+    
+    if (![self isDone]) {
+        if ([self isNestedStructure: [self currentItem]]) {
+            currentListTerm = [[self currentItem] listTerm];
+            currentListEnvironment = currentEnvironment;
+            index--;
+            [super next];
+        }
+    }
+    
+    return self;
 }
 
 - next
 {
-	if ([currentListTerm tail] == nil) { 
-		if ([self isNestedStructure: [self currentItem]]) {
-			currentListTerm = [[self currentItem] listTerm];
-			currentListEnvironment = currentEnvironment;
-			index--;
-		}
-	}
-	
-	[super next];
-		
-	if ([currentListTerm tail] == nil) {
-		if ([self isNestedStructure: [self currentItem]]) {
-			currentListTerm = [[self currentItem] listTerm];
-			currentListEnvironment = currentEnvironment;
-			index--;
-			[super next];
-		}
-	}
-	
-	return self;
+    if ([currentListTerm tail] == nil) { 
+        if ([self isNestedStructure: [self currentItem]]) {
+            currentListTerm = [[self currentItem] listTerm];
+            currentListEnvironment = currentEnvironment;
+            index--;
+        }
+    }
+    
+    [super next];
+        
+    if ([currentListTerm tail] == nil) {
+        if ([self isNestedStructure: [self currentItem]]) {
+            currentListTerm = [[self currentItem] listTerm];
+            currentListEnvironment = currentEnvironment;
+            index--;
+            [super next];
+        }
+    }
+    
+    return self;
 }
 
 - (BOOL) isLast
 {
-	id	binding;
-	
-	if ([[currentListTerm tail] isKindOfClass: [VariableTerm class]]) {
-		binding = [currentListEnvironment getBinding: [currentListTerm tail]];
-		
-		return (	[super isLast]
-					&& [binding isBound]
-					&& ![self isNestedStructure: [binding reference]] );
-	} else {
-		return (	[super isLast]
-					&& ![self isNestedStructure: [[currentListTerm tail] head]] );
-	}
+    id    binding;
+    
+    if ([[currentListTerm tail] isKindOfClass: [VariableTerm class]]) {
+        binding = [currentListEnvironment getBinding: [currentListTerm tail]];
+        
+        return (    [super isLast]
+                    && [binding isBound]
+                    && ![self isNestedStructure: [binding reference]] );
+    } else {
+        return (    [super isLast]
+                    && ![self isNestedStructure: [[currentListTerm tail] head]] );
+    }
 }
 
 - (BOOL) isNestedStructure: anItem
 {
-	id	term;
-	
-	if ([anItem isKindOfClass: [Structure class]] ) {
-		term = [anItem head];
-		
-		if ([term isKindOfClass: [VariableTerm class]]) {
-			term = [[currentEnvironment getBinding: term] reference];
-		}
+    id    term;
+    
+    if ([anItem isKindOfClass: [Structure class]] ) {
+        term = [anItem head];
+        
+        if ([term isKindOfClass: [VariableTerm class]]) {
+            term = [[currentEnvironment getBinding: term] reference];
+        }
 
-		if (	[term respondsToSelector: @selector(functionName)]
-			&& [[term functionName] isEqualToString: functionName] ) 
-		{
-			return YES;
-		}
-	}
-	
-	return NO;
+        if (    [term respondsToSelector: @selector(functionName)]
+            && [[term functionName] isEqualToString: functionName] ) 
+        {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 - (void) dealloc
 {
-	[functionName release];
-	return [super dealloc];
+    [functionName release];
+    return [super dealloc];
 }
 
 @end

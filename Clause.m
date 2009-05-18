@@ -34,82 +34,82 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - initTerm: aTerm tail: anotherTerm
 {
-	[super initTerm: aTerm tail: anotherTerm];
-	
-	return self;
+    [super initTerm: aTerm tail: anotherTerm];
+    
+    return self;
 }
 
 - (void) dealloc
-{	
-	[variableTable removeAllObjects];
-	[variableTable release];
-	[super dealloc];
+{    
+    [variableTable removeAllObjects];
+    [variableTable release];
+    [super dealloc];
 }
 
 - createIterator: environment
 {
-	return [[NestedStructureIterator alloc] initList: [self body] in: environment functor: @","];
+    return [[NestedStructureIterator alloc] initList: [self body] in: environment functor: @","];
 }
 
 - headTerm
 {
-	if (	[[[listTerm head] functionName] isEqualToString: @":-"]
-			|| [[[listTerm head] functionName] isEqualToString: @"?-"] ) 
-	{
-		return [[listTerm tail] head];
-	} else {
-		return [listTerm head];
-	}
+    if (    [[[listTerm head] functionName] isEqualToString: @":-"]
+            || [[[listTerm head] functionName] isEqualToString: @"?-"] ) 
+    {
+        return [[listTerm tail] head];
+    } else {
+        return [listTerm head];
+    }
 }
 
 - body
 {
-	if (	[[[listTerm head] functionName] isEqualToString: @":-"]
-		|| [[[listTerm head] functionName] isEqualToString: @"?-"] ) 
-	{
-		return [[listTerm tail] tail];
-	} else {
-		return [listTerm tail];
-	}
+    if (    [[[listTerm head] functionName] isEqualToString: @":-"]
+        || [[[listTerm head] functionName] isEqualToString: @"?-"] ) 
+    {
+        return [[listTerm tail] tail];
+    } else {
+        return [listTerm tail];
+    }
 }
 
 - variableTable
 {
-	return variableTable;
+    return variableTable;
 }
 
 - addNamedVariable: (NSString *) name
 {
-	if ([variableTable objectForKey: name] == nil) {
-		[variableTable setValue: [[[NamedVariable alloc] initVariable: name] retain] forKey: name];
-	}
-	
-	return [[variableTable objectForKey: name] retain];
+    if ([variableTable objectForKey: name] == nil) {
+        [variableTable setValue: [[[NamedVariable alloc] initVariable: name] retain] forKey: name];
+    }
+    
+    return [[variableTable objectForKey: name] retain];
 }
 
 - setVariableTable: (NSMutableDictionary *) variables;
 {
-	variableTable = variables;
-	return self;
+    variableTable = variables;
+    return self;
 }
 
 - (void) printForDebugger: (NSOutputStream *) stream;
 {
-	if ([self headTerm] != nil) {
-		[[self headTerm] printForDebugger: stream];
-		[stream printWithFormat: @" "];
-	}
-	
-	[[listTerm head] printForDebugger: stream];
-	
-	if ([self body] != nil) {
-		[stream printWithFormat: @" "];
-		[[self body] printContentsValue: nil output: stream];
-	}
-	
-	[stream printWithFormat: @".\n"];
+    if ([self headTerm] != nil) {
+        [[self headTerm] printForDebugger: stream];
+        [stream printWithFormat: @" "];
+    }
+    
+    [[listTerm head] printForDebugger: stream];
+    
+    if ([self body] != nil) {
+        [stream printWithFormat: @" "];
+        [[self body] printContentsValue: nil output: stream];
+    }
+    
+    [stream printWithFormat: @".\n"];
 
-	return;
+    return;
 }
 
 @end

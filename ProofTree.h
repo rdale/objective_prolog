@@ -25,34 +25,34 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #import "Unify.h"
 #import "Prolog.h"
 
-#define STANDARD_FILENAME			@"user"
+#define STANDARD_FILENAME            @"user"
 
 
 /*
- *	- database
- *		- a prolog world containing a database of compiled relations.
+ *    - database
+ *        - a prolog world containing a database of compiled relations.
  */
 
 @interface ProofTree: NSObject
 
 {
-	Prolog *	database;
-	id			queryGoal;
-	id			queryPredicate;
-	jmp_buf		continuation;
-	
-	NSInputStream *	currentInput;
-	NSString *		currentInputName;
-	int			currentInputFd;
-	
-	NSOutputStream *	currentOutput;
-	NSString *		currentOutputName;
-	int			currentOutputFd;
-	
-	long		elapsedTime;
-	NSInteger	sequence;
-	NSInteger	inferenceCount;
-	NSInteger	solutionCount;
+    Prolog *    database;
+    id            queryGoal;
+    id            queryPredicate;
+    jmp_buf        continuation;
+    
+    NSInputStream *    currentInput;
+    NSString *        currentInputName;
+    int            currentInputFd;
+    
+    NSOutputStream *    currentOutput;
+    NSString *        currentOutputName;
+    int            currentOutputFd;
+    
+    long        elapsedTime;
+    NSInteger    sequence;
+    NSInteger    inferenceCount;
+    NSInteger    solutionCount;
 }
 
 - initQuery: queryClause database: aDatabase tracing: (BOOL) traceOption;
