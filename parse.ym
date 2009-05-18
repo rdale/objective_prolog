@@ -43,26 +43,24 @@
 #define TRACE_RULE(RULE, TERM)
 #endif
 
-extern id        prolog;
+extern void     ResetLex(void);
+extern void     yyerror(char * fmt, ...);
+extern int      yywrap(void);
 
-extern void        ResetLex(void);
-extern void        yyerror(char * fmt, ...);
-extern int        yywrap(void);
+id              CurrentTerm(void);
+static id       addNamedVariable(char * name);
 
-id        CurrentTerm(void);
-static id        addNamedVariable(char * name);
+static    id    currentTerm = nil;
+static    id    variableTable = nil;
 
-static    id        currentTerm = nil;
-static    id        variableTable = nil;
-
-static void        clearLookaheadToken(void);
+static void     clearLookaheadToken(void);
 
 %}
 
 %union {
-    int                intValue;
-    char *            stringValue;
-    id                idValue;
+    int     intValue;
+    char *  stringValue;
+    id      idValue;
 }
 
 %token
@@ -195,7 +193,7 @@ prolog_start
             [currentTerm setVariableTable: variableTable];
             clearLookaheadToken();
             
-            TRACE_RULE("clause_start clause T_DOT", currentTerm);
+            TRACE_RULE(@"clause_start clause T_DOT", currentTerm);
         }
     |    clause_start or_expression T_DOT
         {
@@ -203,7 +201,7 @@ prolog_start
             [currentTerm setVariableTable: variableTable];
             clearLookaheadToken();
             
-            TRACE_RULE("clause_start or_expression T_DOT", currentTerm);
+            TRACE_RULE(@"clause_start or_expression T_DOT", currentTerm);
         }
     ;
 
@@ -222,14 +220,14 @@ clause
             listTerm = [[ListTerm alloc] initTerm: nil tail: $2];
             $$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: listTerm];
             
-            TRACE_RULE("T_IF_OP goal_sequence", $$);
+            TRACE_RULE(@"T_IF_OP goal_sequence", $$);
         }
     |    goal T_IF_OP or_expression
         {
             [$1 setTail: $3];
             $$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $2]] tail: $1];
             
-            TRACE_RULE("goal T_IF_OP goal_sequence", $$);
+            TRACE_RULE(@"goal T_IF_OP goal_sequence", $$);
         }
     |    T_QUERY_OP or_expression
         {
@@ -238,7 +236,7 @@ clause
             listTerm = [[ListTerm alloc] initTerm: nil tail: $2];
             $$ = [[Clause alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: listTerm];
 
-            TRACE_RULE("T_QUERY_OP goal_sequence", $$);
+            TRACE_RULE(@"T_QUERY_OP goal_sequence", $$);
         }
     |    goal T_EXPRESSION_RULE_OP or_expression
     ;
@@ -263,7 +261,7 @@ or_expression
             infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
             $$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
             
-            TRACE_RULE("goal_sequence T_OR_OP or_expression", $$);
+            TRACE_RULE(@"goal_sequence T_OR_OP or_expression", $$);
         }
     |    goal_sequence
     ;
@@ -271,7 +269,7 @@ or_expression
 goal_sequence
     :    goal
         {
-            TRACE_RULE("goal", $$);
+            TRACE_RULE(@"goal", $$);
         }
     |    goal T_COMMA goal_sequence
         {
@@ -281,7 +279,7 @@ goal_sequence
             infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
             $$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
             
-            TRACE_RULE("goal T_COMMA goal_sequence", $$);
+            TRACE_RULE(@"goal T_COMMA goal_sequence", $$);
         }
     |    goal_sequence T_IMPLY_OP goal_sequence T_OR_OP goal_sequence
         {
@@ -297,7 +295,7 @@ goal_sequence
             ifExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
             $$ = [[ListTerm alloc] initTerm: ifExpression tail: nil];
             
-            TRACE_RULE("goal_sequence T_IMPLY_OP goal_sequence", $$);
+            TRACE_RULE(@"goal_sequence T_IMPLY_OP goal_sequence", $$);
         }
     |    goal_sequence T_IMPLY_OP goal_sequence
         {
@@ -307,20 +305,20 @@ goal_sequence
             ifExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
             $$ = [[ListTerm alloc] initTerm: ifExpression tail: nil];
             
-            TRACE_RULE("goal_sequence T_IMPLY_OP goal_sequence", $$);
+            TRACE_RULE(@"goal_sequence T_IMPLY_OP goal_sequence", $$);
         }
     ;
     
 arg_sequence
     :    goal
         {
-            TRACE_RULE("goal", $$);
+            TRACE_RULE(@"goal", $$);
         }
     |    goal T_COMMA arg_sequence
         {
             [$1 setTail: $3];
             
-            TRACE_RULE("goal T_COMMA arg_sequence", $$);
+            TRACE_RULE(@"goal T_COMMA arg_sequence", $$);
         }
     ;
 
@@ -328,7 +326,7 @@ goal
     :    T_LPAREN clause_term T_RPAREN
         {
             $$ = $2;
-            TRACE_RULE("T_LPAREN clause_term T_RPAREN", $$);
+            TRACE_RULE(@"T_LPAREN clause_term T_RPAREN", $$);
         }
     |    T_IDENTIFIER structure
         {
@@ -337,7 +335,7 @@ goal
             structure = [[Structure alloc] initHead: [NSString stringWithUTF8String: $1] tail: $2];
             $$ = [[ListTerm alloc] initTerm: structure tail: nil];
             
-            TRACE_RULE("T_IDENTIFIER structure", $$);
+            TRACE_RULE(@"T_IDENTIFIER structure", $$);
         }
     |    variable structure
         {
@@ -346,7 +344,7 @@ goal
             structure = [[Structure alloc] initTerm: $1 tail: $2];
             $$ = [[ListTerm alloc] initTerm: structure tail: nil];
             
-            TRACE_RULE("variable structure", $$);
+            TRACE_RULE(@"variable structure", $$);
         }
     |    goal infix_op goal
         {
@@ -356,7 +354,7 @@ goal
             infixExpression = [[InfixExpression alloc] initHead: [NSString stringWithUTF8String: $2] tail: $1];
             $$ = [[ListTerm alloc] initTerm: infixExpression tail: nil];
             
-            TRACE_RULE("goal infix_op goal", $$);
+            TRACE_RULE(@"goal infix_op goal", $$);
         }
     |    T_NOT_OP goal
         {
@@ -365,31 +363,31 @@ goal
             prefixExpression = [[PrefixExpression alloc] initHead: [NSString stringWithUTF8String: $1] tail: $2];
             $$ = [[ListTerm alloc] initTerm: prefixExpression tail: nil];
 
-            TRACE_RULE("T_NOT_OP goal", $$);
+            TRACE_RULE(@"T_NOT_OP goal", $$);
         }
     |    T_IDENTIFIER
         {
             $$ = [[ListTerm alloc] initTerm: [[FunctionTerm alloc] initFunction: [NSString stringWithUTF8String: $1]] tail: nil];
-            TRACE_RULE("T_IDENTIFIER", $$);
+            TRACE_RULE(@"T_IDENTIFIER", $$);
         }
     |    list
         {
-            TRACE_RULE("list", $$);
+            TRACE_RULE(@"list", $$);
         }
     |    numeric_literal
         {
             $$ = [[ListTerm alloc] initTerm: [[NumericTerm alloc] initNumeric: $1] tail: nil];
-            TRACE_RULE("numeric_literal", $$);
+            TRACE_RULE(@"numeric_literal", $$);
         }
     |    string_literal
         {
             $$ = [[ListTerm alloc] initTerm: $1 tail: nil];
-            TRACE_RULE("string_literal", $$);
+            TRACE_RULE(@"string_literal", $$);
         }
     |    variable
         {
             $$ = [[ListTerm alloc] initTerm: $1 tail: nil];
-            TRACE_RULE("variable", $$);
+            TRACE_RULE(@"variable", $$);
         }
     ;
 
@@ -416,12 +414,12 @@ variable
     :    T_VARIABLE
         {
             $$ = addNamedVariable($1);
-            TRACE_RULE("T_VARIABLE", $$);
+            TRACE_RULE(@"T_VARIABLE", $$);
         }
     |    T_ANONYMOUS_VARIABLE
         {
             $$ = [[[VariableTerm alloc] init] retain];
-            TRACE_RULE("T_ANONYMOUS_VARIABLE", $$);
+            TRACE_RULE(@"T_ANONYMOUS_VARIABLE", $$);
         }
     ;
     
@@ -460,7 +458,7 @@ structure
     :    T_LPAREN arg_sequence T_RPAREN
         {
             $$ = $2;
-            TRACE_RULE("T_LPAREN arg_sequence T_RPAREN", $$);
+            TRACE_RULE(@"T_LPAREN arg_sequence T_RPAREN", $$);
         }
     ;
     
@@ -468,24 +466,24 @@ list
     :    T_SQUARE_LPAREN list_sequence
         {
             $$ = [[ListTerm alloc] initTerm: $2 tail: nil];
-            TRACE_RULE("T_SQUARE_LPAREN list_sequence", $$);
+            TRACE_RULE(@"T_SQUARE_LPAREN list_sequence", $$);
         }
     |    T_SQUARE_LPAREN T_SQUARE_RPAREN
         {
             $$ = [[ListTerm alloc] initTerm: [[ListTerm alloc] init] tail: nil];
-            TRACE_RULE("T_SQUARE_LPAREN T_SQUARE_RPAREN", $$);
+            TRACE_RULE(@"T_SQUARE_LPAREN T_SQUARE_RPAREN", $$);
         }
     |    T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN
         {
             [$3 setTail: $5];
             $$ = [[ListTerm alloc] initTerm: $3 tail: nil];
             
-            TRACE_RULE("T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
+            TRACE_RULE(@"T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
         }
     |    T_DOT T_LPAREN goal T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN
         {
             $$ = [[ListTerm alloc] initTerm: $3 tail: nil];
-            TRACE_RULE("T_DOT T_LPAREN goal T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
+            TRACE_RULE(@"T_DOT T_LPAREN goal T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
         }
     ;
         
@@ -498,17 +496,17 @@ list_sequence
             [$1 setTail: listTerm];
             $$ = $1;
             
-            TRACE_RULE("goal T_SQUARE_RPAREN", $$);
+            TRACE_RULE(@"goal T_SQUARE_RPAREN", $$);
         }
     |    goal T_HEAD_TAIL_SEPARATOR list_end
         {
             [$1 setTail: $3];
-            TRACE_RULE("goal T_HEAD_TAIL_SEPARATOR list_end", $$);
+            TRACE_RULE(@"goal T_HEAD_TAIL_SEPARATOR list_end", $$);
         }
     |    goal T_COMMA list_sequence
         {
             [$1 setTail: $3];
-            TRACE_RULE("goal T_COMMA list_sequence", $$);
+            TRACE_RULE(@"goal T_COMMA list_sequence", $$);
         }
     ;
     
@@ -521,11 +519,11 @@ list_end
             [$1 setTail: listTerm];
             $$ = $1;
 
-            TRACE_RULE("list T_SQUARE_RPAREN", $$);
+            TRACE_RULE(@"list T_SQUARE_RPAREN", $$);
         }
     |    variable T_SQUARE_RPAREN
         {
-            TRACE_RULE("variable T_SQUARE_RPAREN", $$);
+            TRACE_RULE(@"variable T_SQUARE_RPAREN", $$);
         }
     ;
 
@@ -535,7 +533,7 @@ list_pair
             [$3 setTail: $5];
             $$ = $3;
             
-            TRACE_RULE("T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
+            TRACE_RULE(@"T_DOT T_LPAREN goal T_COMMA list_pair T_RPAREN", $$);
         }
     |    T_DOT T_LPAREN goal T_COMMA T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN
         {
@@ -545,7 +543,7 @@ list_pair
             [$3 setTail: listTerm];
             $$ = $3;
             
-            TRACE_RULE("T_DOT T_LPAREN goal T_COMMA T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
+            TRACE_RULE(@"T_DOT T_LPAREN goal T_COMMA T_SQUARE_LPAREN T_SQUARE_RPAREN T_RPAREN", $$);
         }
     ;
         

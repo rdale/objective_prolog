@@ -197,9 +197,9 @@
 	};
 	B40B22C50FAF143000E8E929 /* BuiltinPredicate.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 15288}}";
-			sepNavSelRange = "{5620, 0}";
-			sepNavVisRange = "{5385, 1301}";
+			sepNavIntBoundsRect = "{{0, 0}, {840, 16184}}";
+			sepNavSelRange = "{23993, 0}";
+			sepNavVisRange = "{27674, 491}";
 			sepNavWindowFrame = "{{38, 147}, {1160, 605}}";
 		};
 	};
@@ -320,9 +320,9 @@
 	};
 	B40B22F60FAF156200E8E929 /* parse.ym */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {996, 8582}}";
-			sepNavSelRange = "{1020, 0}";
-			sepNavVisRange = "{667, 743}";
+			sepNavIntBoundsRect = "{{0, 0}, {840, 8498}}";
+			sepNavSelRange = "{1389, 0}";
+			sepNavVisRange = "{487, 782}";
 		};
 	};
 	B40B22FA0FAF158900E8E929 /* PostfixExpression.h */ = {
@@ -355,23 +355,23 @@
 	};
 	B40B22FE0FAF158900E8E929 /* Prolog.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 700}}";
-			sepNavSelRange = "{1155, 0}";
-			sepNavVisRange = "{1034, 859}";
+			sepNavIntBoundsRect = "{{0, 0}, {840, 728}}";
+			sepNavSelRange = "{1899, 0}";
+			sepNavVisRange = "{1094, 830}";
 		};
 	};
 	B40B22FF0FAF158900E8E929 /* prolog.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {840, 560}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{529, 1124}";
+			sepNavVisRange = "{16, 1583}";
 		};
 	};
 	B40B23080FAF15BC00E8E929 /* Prolog.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 3108}}";
-			sepNavSelRange = "{912, 0}";
-			sepNavVisRange = "{302, 751}";
+			sepNavIntBoundsRect = "{{0, 0}, {840, 2968}}";
+			sepNavSelRange = "{378, 0}";
+			sepNavVisRange = "{0, 948}";
 			sepNavWindowFrame = "{{15, 168}, {1160, 605}}";
 		};
 	};
@@ -385,9 +385,9 @@
 	};
 	B40B230D0FAF15EF00E8E929 /* ProofTree.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 2828}}";
+			sepNavIntBoundsRect = "{{0, 0}, {996, 2786}}";
 			sepNavSelRange = "{1686, 0}";
-			sepNavVisRange = "{3258, 695}";
+			sepNavVisRange = "{1190, 856}";
 			sepNavWindowFrame = "{{15, 168}, {1160, 605}}";
 		};
 	};
@@ -575,8 +575,8 @@
 	B40B257D0FB1A5E700E8E929 /* NSOutputStream(Printf).m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {840, 420}}";
-			sepNavSelRange = "{616, 0}";
-			sepNavVisRange = "{0, 642}";
+			sepNavSelRange = "{445, 21}";
+			sepNavVisRange = "{0, 624}";
 		};
 	};
 	B40B27100FB204A100E8E929 /* PBXTextBookmark */ = {
@@ -868,7 +868,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {840, 448}}";
 			sepNavSelRange = "{283, 0}";
-			sepNavVisRange = "{0, 892}";
+			sepNavVisRange = "{3, 890}";
 		};
 	};
 	B46811E70FBAEFC900E644AA /* PBXTextBookmark */ = {
@@ -878,7 +878,7 @@
 		rLen = 0;
 		rLoc = 283;
 		rType = 0;
-		vrLen = 905;
+		vrLen = 873;
 		vrLoc = 20;
 	};
 	B4C946A50FBC26990024CB9F /* PBXTextBookmark */ = {

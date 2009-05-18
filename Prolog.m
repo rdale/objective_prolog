@@ -11,7 +11,7 @@ extern void    BeginEdinburghSyntax(void);
 extern void    BeginStandardSyntax(void);
 extern void    BeginSimpleSyntax(void);
 
-id prolog = nil;
+Prolog * prolog = nil;
 
 @implementation Prolog
 
