@@ -40,7 +40,6 @@ extern int    ftime(struct timeb * tp);
     currentOutput = (NSOutputStream *) nil;
         
     // [queryClause printForDebugger: [self currentOutput]];
-    // (void) NXFlush([self currentOutput]);
     queryPredicate = [[NSMutableArray alloc] init];
     [queryPredicate addObject: queryClause];
 
@@ -88,7 +87,6 @@ extern int    ftime(struct timeb * tp);
     
     elapsedTime +=    ((endTime.time * 1000) + endTime.millitm) 
                     - ((startTime.time * 1000) + startTime.millitm);
-    // NXFlush([self currentOutput]);
     
     return solutionFound;                
 }
@@ -194,7 +192,6 @@ extern int    ftime(struct timeb * tp);
                 inferenceCount,
                 elapsedTime == 0 ? 0 : (inferenceCount * 1000) / elapsedTime ];
     
-    // NXFlush([self currentOutput]);
     return self;
 }
 

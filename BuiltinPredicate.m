@@ -246,10 +246,10 @@ extern id    CurrentTerm();
     environment2 = [argIterator currentEnvironment];
     
 #ifdef    DEBUG
-    NXLogError("Univ, parentGoal: %d, environment1: %d, environment2: %d\n",
-                [parentGoal goalSequence],
-                [environment1 goalSequence],
-                [environment2 goalSequence] );
+    NSLog(  @"Univ, parentGoal: %d, environment1: %d, environment2: %d\n",
+            [parentGoal goalSequence],
+            [environment1 goalSequence],
+            [environment2 goalSequence] );
 #endif
 
     if ([value1 isKindOfClass: [FunctionTerm class]]) {
@@ -335,7 +335,7 @@ extern id    CurrentTerm();
         } else if ([value2 isKindOfClass: [ListTerm class]]) {
             iterator = [value2 createIterator: environment2];
         
-            for (    [iterator first]; 
+            for (   [iterator first]; 
                     ![iterator isDone] && ([iterator index] + 1) < [value1 intValue]; 
                     [iterator next] ) 
             {
@@ -478,7 +478,7 @@ extern id    CurrentTerm();
     id    value3;
     id    environment3;
     id    numberOfArgs;
-    int    count;
+    NSInteger count;
     id    functionTerm;
     id    iterator;
     
@@ -562,9 +562,9 @@ extern id    CurrentTerm();
 
 - _get
 {
-    id                value1;
-    unsigned char    ch;
-    id                inputCharacter;
+    id              value1;
+    unsigned char   ch;
+    id              inputCharacter;
     
     SUCCEED_ONCE;
     value1 = [[argIterator next] currentItem];
@@ -737,10 +737,10 @@ extern id    CurrentTerm();
 
 - _ls
 {
-    id        value1;
-    FILE *    stream;
-    char *    lsCommand;
-    int        ch;
+    id      value1;
+    FILE *  stream;
+    char *  lsCommand;
+    int     ch;
     
     SUCCEED_ONCE;
     value1 = [[argIterator next] currentItem];
@@ -791,7 +791,7 @@ extern id    CurrentTerm();
     if ([value1 isKindOfClass: [FunctionTerm class]]) {
         name = [value1 functionName];
         
-        for (    index = [name length], listTerm = nil;
+        for (   index = [name length], listTerm = nil;
                 index >= 0;
                 index-- )
         {
@@ -807,7 +807,7 @@ extern id    CurrentTerm();
     } else if ([value2 isKindOfClass: [ListTerm class]]) {
         numericListIterator = [value2 createIterator: environment2];
                             
-        for (    [numericListIterator first], ptr = buffer; 
+        for (   [numericListIterator first], ptr = buffer; 
                 ![numericListIterator isDone];
                 [numericListIterator next] )
         {
@@ -948,8 +948,8 @@ extern id    CurrentTerm();
 
 - _reconsult
 {
-    id            value1;
-    NSInputStream *    reconsultStream;
+    id              value1;
+    NSInputStream * reconsultStream;
     
     SUCCEED_ONCE;
     value1 = [[argIterator next] currentItem];

@@ -189,7 +189,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 - bind: (Binding *) binding to: aReference in: (Goal *) anEnvironment
 {
-    // NX_ASSERT(![binding isBound], "![binding isBound]");
     
 #ifdef    DEBUG
     if ([binding environment] != parentGoal && [binding environment] != self) {

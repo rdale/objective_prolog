@@ -21,6 +21,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #import "prolog.h"
 #import "ProofTree.h"
 
+extern id prolog;
+
 @interface Prolog : NSObject
 
 {

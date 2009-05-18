@@ -11,6 +11,8 @@ extern void    BeginEdinburghSyntax(void);
 extern void    BeginStandardSyntax(void);
 extern void    BeginSimpleSyntax(void);
 
+id prolog = nil;
+
 @implementation Prolog
 
 - init
@@ -31,6 +33,7 @@ extern void    BeginSimpleSyntax(void);
     
     [inputStream close];
     [outputStream close];
+    prolog = self;
     return self;
 }
 

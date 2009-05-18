@@ -36,10 +36,9 @@
 #undef YYDEBUG        
 
 #ifdef YYDEBUG
-#define TRACE_RULE(RULE, TERM)    printf("RULE: %s\n", RULE);
-//#define TRACE_RULE(RULE, TERM)            [[prolog consoleOut] printWithFormat: @"%@ -> ", RULE]; \
-//                                        [TERM printForDebugger: [prolog consoleOut]]; \
-//                                        [[prolog consoleOut] printWithFormat: @"\n"];
+#define TRACE_RULE(RULE, TERM)      [[prolog consoleOut] printWithFormat: @"%@ -> ", RULE]; \
+                                    [TERM printForDebugger: [prolog consoleOut]]; \
+                                    [[prolog consoleOut] printWithFormat: @"\n"];
 #else
 #define TRACE_RULE(RULE, TERM)
 #endif
