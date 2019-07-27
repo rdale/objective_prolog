@@ -1,10 +1,10 @@
 /*
     Unify.h
-    
+
     Author:    Richard Dale
     Date:    July 1997
     Copyright (c) 1993-2009 Richard Dale.
-    
+
 */
 
 /*

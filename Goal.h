@@ -27,9 +27,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  THE SOFTWARE.
 */
 
-#import "NSOutputStream(Printf).h"
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
 
-typedef enum ProofState    ProofState;
+#import "NSOutputStream_Printf.h"
 
 enum ProofState {
     START_PROOF,
@@ -39,6 +40,8 @@ enum ProofState {
     PROVE_BODY,
     ALWAYS_FAIL,
 };
+
+typedef enum ProofState    ProofState;
 
 @class    Clause;
 @class    ListIterator;

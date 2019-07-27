@@ -38,7 +38,7 @@ extern int    ftime(struct timeb * tp);
     currentOutputName = [NSString stringWithString: STANDARD_FILENAME];
     currentInput = (NSInputStream *) nil;
     currentOutput = (NSOutputStream *) nil;
-        
+
     // [queryClause printForDebugger: [self currentOutput]];
     queryPredicate = [[NSMutableArray alloc] init];
     [queryPredicate addObject: queryClause];
@@ -46,10 +46,10 @@ extern int    ftime(struct timeb * tp);
     if (queryGoal != nil) {
         [queryGoal release];
     }
-    
+
     queryGoal = [[Goal alloc] initGoal: queryPredicate proofTree: self parent: nil goalDepth: 0 ];
-    
-    return self;                
+
+    return self;
 }
 
 - (BOOL) getSolution
@@ -57,23 +57,23 @@ extern int    ftime(struct timeb * tp);
     struct timeb    startTime;
     struct timeb    endTime;
     BOOL            solutionFound;
-    
+
     (void) ftime(&startTime);
-    
+
     if (setjmp(continuation) == 0) {
         [queryGoal prove: nil lastGoal: YES];
         (void) ftime(&endTime);
         solutionFound = NO;
-        
+
         if ([database traceOption]) {
             [[self currentOutput] printWithFormat: @"\n"];
         }
-        
+
         [[self currentOutput] printWithFormat: @"NO\n\n"];
     } else {
         (void) ftime(&endTime);
         solutionFound = YES;
-        
+
         if ([database traceOption]) {
             [[self currentOutput] printWithFormat: @"\n"];
         }
@@ -84,11 +84,11 @@ extern int    ftime(struct timeb * tp);
             [[self currentOutput] printWithFormat: @"\n"];
         }
     }
-    
-    elapsedTime +=    ((endTime.time * 1000) + endTime.millitm) 
+
+    elapsedTime +=    ((endTime.time * 1000) + endTime.millitm)
                     - ((startTime.time * 1000) + startTime.millitm);
-    
-    return solutionFound;                
+
+    return solutionFound;
 }
 
 - (void) continue
@@ -107,14 +107,14 @@ extern int    ftime(struct timeb * tp);
         [currentInput close];
         currentInput = (NSInputStream *) nil;
     }
-    
+
     currentInputName = [filename retain];
     if (![currentInputName isEqualToString: STANDARD_FILENAME]) {
         currentInput = [NSInputStream inputStreamWithFileAtPath: currentInputName];
         [currentInput open];
     }
 
-    
+
     return YES;
 }
 
@@ -138,13 +138,13 @@ extern int    ftime(struct timeb * tp);
         [currentOutput close];
         currentOutput = (NSOutputStream *) nil;
     }
-    
+
     currentOutputName = [filename retain];
     if (![currentOutputName isEqualToString: STANDARD_FILENAME]) {
         currentOutput = [NSOutputStream outputStreamToFileAtPath: currentOutputName append: NO];
         [currentOutput open];
     }
-    
+
     return YES;
 }
 
@@ -191,7 +191,7 @@ extern int    ftime(struct timeb * tp);
                 sequence,
                 inferenceCount,
                 elapsedTime == 0 ? 0 : (inferenceCount * 1000) / elapsedTime ];
-    
+
     return self;
 }
 

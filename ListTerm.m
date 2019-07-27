@@ -43,7 +43,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
     [self setHead: listHead];
     [self setTail: listTail];
-    
+
     return self;
 }
 
@@ -51,6 +51,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     [head release];
     [tail release];
+    printf("[ListTerm dealloc] listTerm %p retainCount: %lu\n", self, [self retainCount]);
     [super dealloc];
 }
 
@@ -85,7 +86,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     if (tail != nil) {
         [tail release];
     }
-    
+
     tail = aTail;
     [tail retain];
     return self;
@@ -97,7 +98,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     [stream printWithFormat: @"["];
     [self printContentsValue: nil output: stream];
     [stream printWithFormat: @"]"];
-    
+
     return;
 }
 
@@ -109,39 +110,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 - printContentsValue: goal output: (NSOutputStream *) stream
 {
     id        iterator;
-    
+
     iterator = [self createIterator: goal];
     [iterator first];
-    
+
     if (![iterator isDone]) {
         if ([iterator currentItem] == nil) {
             [stream printWithFormat: @"[]"];
         } else {
             [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
         }
-        
+
         [iterator next];
-        
+
         while (![iterator isDone]) {
             [stream printWithFormat: @", "];
-                
+
             if ([iterator currentItem] == nil) {
                 [stream printWithFormat: @"[]"];
             } else {
                 [[iterator currentItem] printValue: [iterator currentEnvironment] output: stream];
             }
-            
+
             [iterator next];
         }
-        
-        if ([iterator currentListTerm] != nil && ![[iterator currentListTerm] isKindOfClass: [ListTerm class]]) {        
+
+        if ([iterator currentListTerm] != nil && ![[iterator currentListTerm] isKindOfClass: [ListTerm class]]) {
                 [stream printWithFormat: @" | "];
                 [[iterator currentListTerm] printValue: [iterator currentListEnvironment] output: stream];
-        }    
+        }
     }
-    
+
     [iterator release];
-    
+
     return self;
 }
 
@@ -150,7 +151,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     [stream printWithFormat: @"["];
     [self printContentsValue: goal output: stream];
     [stream printWithFormat: @"]"];
-    
+
     return self;
 }
 

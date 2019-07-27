@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <sys/timeb.h>
 
+#import <Foundation/NSBundle.h>
+
 extern void    SetStreams(NSInputStream * inStream, NSOutputStream * outStream);
 extern int        yyparse(void);
 extern int        yydebug;
@@ -22,7 +24,10 @@ Prolog * prolog = nil;
     [self setTraceOption: NO];
     
     NSBundle * bundle = [NSBundle bundleForClass: [Prolog class]];
-    NSString * startupScript = [bundle pathForResource: @"startup" ofType: @"pl"];    
+    // NSString * startupScript = [bundle pathForResource: @"startup" ofType: @"pl"];    
+    NSString * startupScript = @"/home/rdale/play/try_tool/ObjcProlog/Resources/startup.pl";
+    // NSString * startupScript = @"/home/rdale/play/try_tool/ObjcProlog/Resources/test.pl";
+    
     NSInputStream * inputStream = [NSInputStream inputStreamWithFileAtPath: startupScript];
     [inputStream open];
     
@@ -30,7 +35,6 @@ Prolog * prolog = nil;
     [outputStream open];
     
     [self consult: inputStream output: outputStream];
-    
     [inputStream close];
     [outputStream close];
     prolog = self;
@@ -84,7 +88,7 @@ Prolog * prolog = nil;
         
         currentTerm = [self readTerm: inputStream output: outputStream];
     }
-    
+       
     return SUCCESS;
 }
 
@@ -197,7 +201,7 @@ Prolog * prolog = nil;
         ;
     }
     
-    [proofTree printStatistics];
+    // [proofTree printStatistics];
     [proofTree release];
     
     return self;

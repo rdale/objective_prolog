@@ -32,6 +32,8 @@
 #import "Clause.h"
 #import "NestedStructureIterator.h"
 
+// yydebug = 1;
+
 #define YYDEBUG        1
 #undef YYDEBUG        
 

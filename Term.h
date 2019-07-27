@@ -18,6 +18,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  THE SOFTWARE.
 */
 
+#import <Foundation/NSObject.h>
+
+#import "NSOutputStream_Printf.h"
+
 @interface Term : NSObject
 
 {

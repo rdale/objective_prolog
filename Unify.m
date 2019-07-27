@@ -1,10 +1,10 @@
 /*
     Unify.m
-    
+
     Author:    Richard Dale
     Date:    July 1997
     Copyright (c) 1993-2009 Richard Dale.
-    
+
 */
 
 /*
@@ -36,7 +36,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #import "Prolog.h"
 #import "Goal.h"
 #import "Unify.h"
-#import "NSOutputStream(Printf).h"
+#import "NSOutputStream_Printf.h"
 
 #define TRACE_UNIFY(TERM, GOAL, OTHERTERM, OTHERGOAL)    [self indent: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @"UNIFY: "]; \
@@ -46,12 +46,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                                         [otherTerm printForDebugger: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @" in GOAL #%d", [OTHERGOAL goalSequence]]; \
                                         [[proofTree currentOutput] printWithFormat: @"\n"];
-                                        
+
 #define PRINT_BINDING_VALUE(BINDING)    [self indent: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @"%@ = ", variableTerm]; \
                                         [BINDING printValue: [BINDING environment] output: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @"\n"];
-                                        
+
 #define TRACE_TRAIL(BINDING)            [self indent: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @"TRAIL: "]; \
                                         [BINDING printForDebugger: [proofTree currentOutput]]; \
@@ -63,16 +63,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     Binding *        binding;
     Binding *        otherBinding;
-        
+
     if ([term isKindOfClass: [VariableTerm class]]) {
         binding = [goal getBinding: term];
-        
+
         if ([binding isBound]) {
             return [self isEqual: [binding reference] in: [binding environment] with: otherTerm in: otherGoal];
         } else {
             if ([otherTerm isKindOfClass: [VariableTerm class]]) {
                 otherBinding = [otherGoal getBinding: otherTerm];
-                
+
                 if ([otherBinding isBound]) {
                     return [self isEqual: term in: goal with: [otherBinding reference] in: [otherBinding environment]];
                 } else {
@@ -84,17 +84,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         }
     } else if ([otherTerm isKindOfClass: [VariableTerm class]]) {
         otherBinding = [otherGoal getBinding: otherTerm];
-                
+
         if ([otherBinding isBound]) {
             return [self isEqual: term in: goal with: [otherBinding reference] in: [otherBinding environment]];
         } else {
             return NO;
         }
     } else if ([term isKindOfClass: [Structure class]] && [otherTerm isKindOfClass: [Structure class]]) {
-        return [    self 
-                        isEqual: [term listTerm] 
-                        in: goal 
-                        with: [otherTerm listTerm] 
+        return [    self
+                        isEqual: [term listTerm]
+                        in: goal
+                        with: [otherTerm listTerm]
                         in: otherGoal ];
     } else if (    (term == nil || [term isKindOfClass: [ListTerm class]])
                 && (otherTerm == nil || [otherTerm isKindOfClass: [ListTerm class]]) )
@@ -115,7 +115,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     } else {
         return [term isEqual: otherTerm];
     }
-    
+
     return NO;
 }
 
@@ -123,20 +123,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     Binding *        binding;
     Binding *        otherBinding;
-    
+
 #ifdef    DEBUG
     TRACE_UNIFY(term, goal, otherTerm, otherGoal);
 #endif
-        
+
     if ([term isKindOfClass: [VariableTerm class]]) {
         binding = [goal getBinding: term];
-        
+
         if ([binding isBound]) {
             return [self unify: [binding reference] in: [binding environment] with: otherTerm in: otherGoal];
         } else {
             if ([otherTerm isKindOfClass: [VariableTerm class]]) {
                 otherBinding = [otherGoal getBinding: otherTerm];
-                
+
                 if ([otherBinding isBound]) {
                     [self bind: binding to: [otherBinding reference] in: [otherBinding environment]];
                     return YES;
@@ -151,7 +151,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         }
     } else if ([otherTerm isKindOfClass: [VariableTerm class]]) {
         otherBinding = [otherGoal getBinding: otherTerm];
-                
+
         if ([otherBinding isBound]) {
             return [self unify: term in: goal with: [otherBinding reference] in: [otherBinding environment]];
         } else {
@@ -159,10 +159,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             return YES;
         }
     } else if ([term isKindOfClass: [Structure class]] && [otherTerm isKindOfClass: [Structure class]]) {
-        return [    self 
-                        unify: [term listTerm] 
-                        in: goal 
-                        with: [otherTerm listTerm] 
+        return [    self
+                        unify: [term listTerm]
+                        in: goal
+                        with: [otherTerm listTerm]
                         in: otherGoal ];
     } else if (    (term == nil || [term isKindOfClass: [ListTerm class]])
                 && (otherTerm == nil || [otherTerm isKindOfClass: [ListTerm class]]) )
@@ -183,13 +183,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     } else {
         return [term isEqual: otherTerm];
     }
-    
+
     return NO;
 }
 
 - bind: (Binding *) binding to: aReference in: (Goal *) anEnvironment
 {
-    
+
 #ifdef    DEBUG
     if ([binding environment] != parentGoal && [binding environment] != self) {
         [self indent: [proofTree currentOutput]];
@@ -198,21 +198,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         [[proofTree currentOutput] printWithFormat: @"\n"];
     }
 #endif
-    
+
     if (binding == aReference) {
         return self;
     }
-    
+
     if ([binding environment] != self) {
 #ifdef    DEBUG
         TRACE_TRAIL(binding);
 #endif
         [trail addObject: binding];
     }
-    
+
     [binding setReference: aReference];
     [binding setEnvironment: anEnvironment];
-    
+
 #ifdef    DEBUG
     [self indent: [proofTree currentOutput]];
     [binding printForDebugger: [proofTree currentOutput]];
@@ -233,9 +233,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 - (Binding *) getBinding: variableTerm
 {
     Binding *    binding;
-    
+
     binding = [variableTable objectForKey: variableTerm];
-    
+
     if (binding == nil) {
 #ifdef    DEBUG
         [self indent: [proofTree currentOutput]];
@@ -244,7 +244,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         binding = [[Binding alloc] initBinding: variableTerm environment: self];
         [variableTable setObject: binding forKey: variableTerm];
     }
-    
+
     return [binding dereference];
 }
 
@@ -258,16 +258,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     Binding *        binding;
     NSInteger        count;
-    
+
     count = 0;
     for (id variableTerm in variableTable) {
         binding = [variableTable objectForKey: variableTerm];
         if ([variableTerm isKindOfClass: [NamedVariable class]]) {
-            count++;            
+            count++;
             PRINT_BINDING_VALUE(binding);
         }
     }
-        
+
     return count;
 }
 
