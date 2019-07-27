@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <sys/timeb.h>
 
+#import <Foundation/NSBundle.h>
+
 extern void    SetStreams(NSInputStream * inStream, NSOutputStream * outStream);
 extern int        yyparse(void);
 extern int        yydebug;

@@ -36,7 +36,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #import "Prolog.h"
 #import "Goal.h"
 #import "Unify.h"
-#import "NSOutputStream(Printf).h"
+#import "NSOutputStream_Printf.h"
 
 #define TRACE_UNIFY(TERM, GOAL, OTHERTERM, OTHERGOAL)    [self indent: [proofTree currentOutput]]; \
                                         [[proofTree currentOutput] printWithFormat: @"UNIFY: "]; \

@@ -25,7 +25,11 @@
 #include <limits.h>
 #include <assert.h>
 
+#import <Foundation/NSValue.h>
+
 #include "prolog.h"
+#import "NSOutputStream_Printf.h"
+
 #include "y.tab.h"
 
 #define output(c)            putc(c, yyout)

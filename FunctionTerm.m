@@ -18,6 +18,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  THE SOFTWARE.
 */
 
+#import <Foundation/NSCharacterSet.h>
+
 #import "prolog.h"
 #import "Term.h"
 #import "Goal.h"

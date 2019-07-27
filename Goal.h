@@ -27,7 +27,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  THE SOFTWARE.
 */
 
-#import "NSOutputStream(Printf).h"
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+
+#import "NSOutputStream_Printf.h"
 
 typedef enum ProofState    ProofState;
 

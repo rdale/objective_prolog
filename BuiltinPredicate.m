@@ -20,6 +20,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 
 #import <assert.h>
+#include <unistd.h>
+
+#import <Foundation/NSString.h>
 
 #import "Term.h"
 #import "FunctionTerm.h"
@@ -415,13 +418,14 @@ extern id    CurrentTerm();
 - _chdir
 {
     id    value1;
+    int   status;
     
     SUCCEED_ONCE;
     value1 = [[argIterator next] currentItem];
     
     if ([value1 isKindOfClass: [FunctionTerm class]]){
-        chdir([[value1 functionName] UTF8String]);
-        return self;
+        status = chdir([[value1 functionName] UTF8String]);
+        return (status == 0 ? self : nil);
     }
     
     return nil;
@@ -739,7 +743,7 @@ extern id    CurrentTerm();
 {
     id      value1;
     FILE *  stream;
-    char *  lsCommand;
+    char    lsCommand[PATH_MAX + 1];
     int     ch;
     
     SUCCEED_ONCE;

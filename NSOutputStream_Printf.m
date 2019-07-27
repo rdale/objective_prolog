@@ -6,7 +6,7 @@
 //  Copyright 2009 Foton Sistemas Inteligentes. All rights reserved.
 //
 
-#import "NSOutputStream(Printf).h"
+#import "NSOutputStream_Printf.h"
 
 
 @implementation NSOutputStream (Printf)
