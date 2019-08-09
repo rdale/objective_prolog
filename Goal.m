@@ -346,7 +346,8 @@
     [self indent: stream];
     [stream printWithFormat: @"relation:\n\n"];
     
-    for (NSUInteger i = 0; i <  [relation count]; i++) {
+    NSUInteger i;
+    for (i = 0; i <  [relation count]; i++) {
         [[relation objectAtIndex: i] printForDebugger: stream];
     }
     

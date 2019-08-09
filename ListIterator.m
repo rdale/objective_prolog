@@ -35,24 +35,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 - initList: aList in: anEnvironment
 {
     [super init];
-    
-    listTerm = [aList retain];
-    initialEnvironment = [anEnvironment retain];
-    
+
+    listTerm = aList;
+    initialEnvironment = anEnvironment;
+
     currentListTerm = nil;
     currentListEnvironment = nil;
-    
+
     currentItem = nil;
     currentEnvironment = nil;
-    
+
     return self;
 }
 
 
 - (void) dealloc
 {
-    [listTerm release];
-    [initialEnvironment release];
     [super dealloc];
 }
 
@@ -62,7 +60,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     currentListEnvironment = initialEnvironment;
     currentEnvironment = initialEnvironment;
     index = 0;
-    
+
     return self;
 }
 
@@ -71,17 +69,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     Binding *    binding;
 
     currentListTerm = [currentListTerm tail];
-    
+
     if ([currentListTerm isKindOfClass: [VariableTerm class]]) {
         binding = [currentListEnvironment getBinding: currentListTerm];
-                
+
         if ([binding isBound]) {
             currentListTerm = [binding reference];
             currentListEnvironment = [binding environment];
             currentEnvironment = currentListEnvironment;
         }
     }
-    
+
     index++;
     return self;
 }
@@ -91,14 +89,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     if (index > anIndex) {
         [self first];
     }
-    
+
     while (index < anIndex) {
         [self next];
         if ([self isDone]) {
             return nil;
         }
     }
-    
+
     return [self currentItem];
 }
 
@@ -106,14 +104,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     id    binding;
     id    nextListTerm;
-    
+
     if ([currentListTerm tail] == nil) {
         return YES;
     }
-    
+
     if ([[currentListTerm tail] isKindOfClass: [VariableTerm class]]) {
         binding = [currentListEnvironment getBinding: [currentListTerm tail]];
-        
+
         if ([binding isBound]) {
             nextListTerm = [binding reference];
             return (    ![nextListTerm isKindOfClass: [ListTerm class]]
@@ -122,7 +120,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             return YES;
         }
     }
-    
+
     return NO;
 }
 
@@ -143,16 +141,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
     currentItem = [currentListTerm head];
     currentEnvironment = currentListEnvironment;
-    
+
     if ([currentItem isKindOfClass: [VariableTerm class]]) {
         binding = [currentListEnvironment getBinding: currentItem];
-                
+
         if ([binding isBound]) {
             currentItem = [binding reference];
             currentEnvironment = [binding environment];
-        } 
+        }
     }
-    
+
     return currentItem;
 }
 
@@ -184,7 +182,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         [stream printWithFormat: @"[%d]\t", index];
         [[self currentItem] printValue: [self currentEnvironment] output: stream];
     }
-    
+
     return;
 }
 

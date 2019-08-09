@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 
 #import "FunctionTerm.h"
 #import "ListTerm.h"
-#import "NSOutputStream(Printf).h"
+#import "NSOutputStream_Printf.h"
 
 @interface Goal(BuiltinPredicate)
 
