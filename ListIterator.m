@@ -36,8 +36,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 {
     [super init];
 
-    listTerm = aList;
-    initialEnvironment = anEnvironment;
+    listTerm = [aList retain];
+    initialEnvironment = [anEnvironment retain];
 
     currentListTerm = nil;
     currentListEnvironment = nil;
