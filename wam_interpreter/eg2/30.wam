@@ -1,0 +1,9 @@
+a/0 :
+allocate
+put_variable Y1,A0
+call b/1,1
+put_variable X0,A0
+call c/1,1
+put_unsafe_value Y1,A0
+deallocate
+execute d/1

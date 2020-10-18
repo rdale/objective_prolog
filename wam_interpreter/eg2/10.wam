@@ -1,0 +1,7 @@
+main/0 :
+put_const a,A0
+put_structure f/1,A1
+unify_constant a
+put_structure g/1,A2
+unify_constant b
+execute p/3

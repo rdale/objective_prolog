@@ -1,0 +1,36 @@
+main/0 :
+allocate
+put_variable Y1,A0
+put_const fred,A1
+call gp/2,1
+put_unsafe_value Y1,A0
+built_in write
+deallocate
+built_in nl
+proceed
+
+gp/2 :
+get_variable X0,A0
+allocate
+get_variable Y1,A1
+put_value X0,A0
+put_variable Y2,A1
+call p/2,2
+put_unsafe_value Y2,A0
+put_value Y1,A1
+deallocate
+execute p/2
+
+p/2 :
+try_me_else 4
+get_const jane,A0
+get_const tom,A1
+proceed
+retry_me_else 4
+get_const jane,A0
+get_const bill,A1
+proceed
+trust_me_else fail
+get_const bill,A0
+get_const fred,A1
+proceed

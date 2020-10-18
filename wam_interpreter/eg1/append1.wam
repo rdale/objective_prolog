@@ -1,0 +1,39 @@
+main/0 :
+allocate
+put_variable Y2,A0
+put_variable Y1,A1
+put_structure ./2,A3
+unify_constant b
+unify_constant []
+put_structure ./2,A2
+unify_constant a
+get_variable X3,A3
+unify_value X3
+call append/3,2
+put_unsafe_value Y2,A0
+built_in write
+built_in nl
+put_unsafe_value Y1,A0
+deallocate
+built_in write
+proceed
+
+append/3 :
+try_me_else 5
+get_const [],A0
+get_variable X1,A1
+get_value X1,A2
+proceed
+trust_me_else fail
+get_structure ./2,A0
+unify_variable X0
+unify_variable X3
+get_variable X1,A1
+get_structure ./2,A2
+unify_value X0
+unify_variable X0
+get_variable X2,A0
+put_value X3,A0
+put_value X1,A1
+put_value X2,A2
+execute append/3

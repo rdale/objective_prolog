@@ -1,0 +1,7 @@
+p/3 :
+get_const a,A0
+get_structure f/2,A1
+unify_constant a
+unify_constant b
+get_variable X2,A2
+proceed

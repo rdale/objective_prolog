@@ -1,0 +1,15 @@
+a/3 :
+get_variable X0,A0
+get_variable X1,A1
+get_const b,A2
+put_value X0,A0
+put_value X1,A1
+put_variable X1,A1
+put_const c,A2
+allocate
+call b/3,0
+put_variable X0,A0
+put_variable X1,A1
+put_variable X2,A2
+deallocate
+execute c/3

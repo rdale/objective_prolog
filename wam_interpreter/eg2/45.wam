@@ -1,0 +1,22 @@
+a/2 :
+try_me_else 4
+get_const a,A0
+get_variable X1,A1
+proceed
+retry_me_else 6
+get_structure f/1,A0
+unify_constant a
+get_variable X1,A1
+put_value X1,A0
+execute b/1
+retry_me_else 6
+get_structure f/1,A0
+unify_constant b
+get_variable X1,A1
+put_value X1,A0
+execute c/1
+trust_me_else fail
+get_const [],A0
+get_variable X1,A1
+put_value X1,A0
+execute d/1

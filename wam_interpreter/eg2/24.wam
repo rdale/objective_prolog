@@ -1,0 +1,9 @@
+p/3 :
+get_structure f/1,A0
+unify_variable X0
+get_structure g/1,A1
+unify_variable X1
+get_structure h/2,A2
+unify_value X0
+unify_value X1
+proceed

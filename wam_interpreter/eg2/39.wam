@@ -1,0 +1,10 @@
+a/2 :
+get_const [],A0
+get_structure ./2,A1
+unify_constant x
+unify_variable X0
+put_value X0,A2
+get_structure ./2,A2
+unify_constant y
+unify_constant []
+proceed
