@@ -12,12 +12,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "portable.h"
 #include "const.h"
 #include "types.h"
 #include "tags.h"
-#include "load.i"
-
+#include "load.h"
+#include "main.h"
 
 char *built_ins [] = {
 		"write",
@@ -95,7 +94,15 @@ atom_name atom_table[MAXATOMS];
 
 static int atom_top = 0;
 
-public void loadstore()
+static optype findop(char *opname);
+static void read_instruction(char *opname, struct instr_type *instr);
+static void load_instr(struct instr_type instr);
+static void add_call(char *n);
+static int atom_tbl_addr();
+static int atom_tbl_addr(atom_name name);
+static void skip_comments();
+
+void loadstore()
 {
 	char opname[MAXSTRING];
 	struct instr_type instr;
@@ -119,7 +126,7 @@ public void loadstore()
 #endif
 }
 
-private optype findop(opname)
+static optype findop(opname)
 char *opname;
 {
 	optype op;
@@ -131,7 +138,7 @@ char *opname;
 	return(newproc);
 }
 
-private void read_instruction(opname, instr)
+static void read_instruction(opname, instr)
 char *opname;
 struct instr_type *instr;
 {
@@ -364,7 +371,7 @@ struct instr_type *instr;
 	}
 }
 
-private void load_instr(instr)
+static void load_instr(instr)
 struct instr_type instr;
 {
 	if (codetop >= MAXCODE)
@@ -372,7 +379,7 @@ struct instr_type instr;
 	codestore[codetop++] = instr;
 }
 
-private void add_call(n)
+static void add_call(n)
 char *n;
 {
 /* for instructions call P,N and execute P, find and use address of P
@@ -414,7 +421,7 @@ char *n;
 	strcpy(proc_table[proc_count++].p_name, n);
 }
 
-fix_unres_addr()
+void fix_unres_addr()
 {	int i, c;
  	struct unres_proc *p;
 
@@ -432,7 +439,7 @@ fix_unres_addr()
 }
 
 
-private int atom_tbl_addr(name)
+static int atom_tbl_addr(name)
 atom_name name;
 {
 /* find in or add an atom to atom table */
@@ -447,7 +454,7 @@ atom_name name;
 	return(atom_top++);
 }
 
-private void skip_comments()
+static void skip_comments()
 {	/* each file is allowed to start with a commented section, with
 	   each line begun with a '%' 
 	*/

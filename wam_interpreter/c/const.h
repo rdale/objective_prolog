@@ -10,6 +10,8 @@
    retained.  It may not be used for any commercial purposes.
 */
 
+#ifndef _CONST_H
+#define _CONST_H
 
 #define FAIL (address) 0
 
@@ -96,3 +98,5 @@
 #define newproc			44
 
 #define HASH_MAX	4
+
+#endif

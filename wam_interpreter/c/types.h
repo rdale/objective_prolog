@@ -9,6 +9,11 @@
    retained.  It may not be used for any commercial purposes.
 */
 
+#ifndef _TYPES_H
+#define _TYPES_H
+
+#include "const.h"
+
 typedef unsigned address;	/* address of element in memory */
 typedef int	optype;
 
@@ -143,3 +148,4 @@ struct proc_table_type {
 	unres_proc	*p_unres;
 	};
 
+#endif

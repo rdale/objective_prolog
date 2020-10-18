@@ -13,14 +13,13 @@
 
 #include<stdio.h>
 
-#include "portable.h"
-#include "const.h"
-#include "tags.h"
-#include "types.h"
-#include "wam.i"
+#include "mem.h"
+#include "main.h"
+#include "unify.h"
+#include "wam.h"
 
-public address S;
-public char RWmode;
+address S;
+char RWmode;
 
 extern address B, E, H, HB, TR;
 extern int P, CP;
@@ -32,8 +31,7 @@ extern address memory[];
 extern atom_name atom_table[];
 extern address deref();
 
-private void write_instr(A)
-address A;
+static void write_instr(address A)
 {
   address val;
 
@@ -71,14 +69,14 @@ address A;
     printf("write: unimplemented type\n");
 }
 
-public void deallocate_instr()
+void deallocate_instr()
 {
   CP = *(memory + E + CP_offset);
   E = *(memory + E + CE_offset);
   P++;
 }
 
-public void allocate_instr()
+void allocate_instr()
 {
   address CE;
 
@@ -95,41 +93,39 @@ public void allocate_instr()
 }
 
 
-public void call_instr(proc_addr, n)
-code_addr proc_addr;
-int n;
+void call_instr(code_addr proc_addr, int n)
 {
   CP = P + 1;
   P = proc_addr + 1;  /* one more than proc start */
 }
 
-public void proceed_instr()
+void proceed_instr()
 {
   P = CP;
 }
 	
-public void execute_instr(proc_addr)
+void execute_instr(proc_addr)
 code_addr proc_addr;
 {
   P = proc_addr + 1;
 }
 
 
-public void retry_me_else_instr(L)
+void retry_me_else_instr(L)
 code_addr L;
 {
   *(memory + B) = L;	/* L on top of choice point */
   P++;
 }
 
-public void trust_me_else_instr()
+void trust_me_else_instr()
 {
   HB = *(memory + B - 2);
   B = *(memory + B - 5);
   P++;
 }
 
-public void try_me_else_instr(L)
+void try_me_else_instr(L)
 code_addr L;
 {
   address i, *nextfree;
@@ -152,14 +148,14 @@ code_addr L;
 }
 
 
-public void retry_instr(L)
+void retry_instr(L)
 code_addr L;
 {
   *(memory + B) = P + 1;	/* L on top of choice point */
   P = L;
 }
 
-public void trust_instr(L)
+void trust_instr(L)
 code_addr L;
 {
   HB = *(memory + B - 2);
@@ -167,7 +163,7 @@ code_addr L;
   P = L;
 }
 
-public void try_instr(L)
+void try_instr(L)
 code_addr L;
 {
   address i, *nextfree;
@@ -189,7 +185,7 @@ code_addr L;
   P = L;
 }
 
-public void fail_instr()
+void fail_instr()
 {
   address old_trailptr, trail_entry, *top;
   int i;
@@ -214,7 +210,7 @@ public void fail_instr()
     registers[i] = *(--top);
 }
 
-public void put_const_instr(C, R)
+void put_const_instr(C, R)
 atom_addr C;
 register_type R;
 {
@@ -222,7 +218,7 @@ register_type R;
   P++;
 }
 
-public void get_const_instr(C, R)
+void get_const_instr(C, R)
 atom_addr C;
 register_type R;
 {
@@ -247,7 +243,7 @@ register_type R;
   };
 }
 
-public void get_perm_variable_instr(Y, R)
+void get_perm_variable_instr(Y, R)
 int Y;
 register_type R;
 {
@@ -256,7 +252,7 @@ register_type R;
   P++;
 }
 
-public void get_temp_variable_instr(V, R)
+void get_temp_variable_instr(V, R)
 register_type V;
 register_type R;
 {
@@ -264,7 +260,7 @@ register_type R;
   registers[V] = registers[R];
 }
 
-public void get_perm_value_instr(Y, R)
+void get_perm_value_instr(Y, R)
 int Y;
 register_type R;
 {
@@ -277,7 +273,7 @@ register_type R;
   else P++;
 }
 
-public void get_temp_value_instr(V, R)
+void get_temp_value_instr(V, R)
 register_type V, R;
 {
   address val1, val2, U;
@@ -294,7 +290,7 @@ register_type V, R;
   }
 }
 
-public void put_perm_variable_instr(Y, R)
+void put_perm_variable_instr(Y, R)
 int Y;
 register_type R;
 {
@@ -308,7 +304,7 @@ register_type R;
   *(memory + A) = ADD_TAG(A, VBL_TAG);
 }
 
-public void put_temp_variable_instr(V, R)
+void put_temp_variable_instr(V, R)
 register_type V, R;
 {
   /* create a new vbl cell on the stack and point everything to it */
@@ -319,7 +315,7 @@ register_type V, R;
     fatal("heap overflow");
 }
 
-public void put_perm_value_instr(Y, R)
+void put_perm_value_instr(Y, R)
 int Y;
 register_type R;
 {
@@ -327,14 +323,14 @@ register_type R;
   registers[R] = *(memory + Y + E +1);
 }
 
-public void put_temp_value_instr(V, R)
+void put_temp_value_instr(V, R)
 register_type V, R;
 {
   P++;
   registers[R] = registers[V];
 }
 
-public void put_unsafe_value_instr(Y, R)
+void put_unsafe_value_instr(Y, R)
 int Y;
 register_type R;
 {
@@ -355,7 +351,7 @@ register_type R;
   };
 }
 
-public void get_nil_instr(R)
+void get_nil_instr(R)
 register_type R;
 { address val;
 
@@ -372,14 +368,14 @@ register_type R;
   else P = FAIL_PROC;
 }
 
-public void put_nil_instr(R)
+void put_nil_instr(R)
 register_type R;
 {
   registers[R] = ADD_TAG(0, NIL_TAG);
   P++;
 }
 
-public void get_structure_instr(F, R)
+void get_structure_instr(F, R)
 atom_addr F;
 register_type R;
 {
@@ -414,7 +410,7 @@ register_type R;
   }
 }
 
-public void put_structure_instr(F, R)
+void put_structure_instr(F, R)
 atom_addr F;
 register_type R;
 {
@@ -426,7 +422,7 @@ register_type R;
     P++;
 }
 
-public void put_list_instr(R)
+void put_list_instr(R)
 register_type R;
 {
   registers[R] = *(memory + H) = ADD_TAG(H, LIST_TAG);
@@ -436,7 +432,7 @@ register_type R;
     fatal("heap overflow");
 }
 
-public void get_list_instr(R)
+void get_list_instr(R)
 register_type R;
 { address val;
 
@@ -461,7 +457,7 @@ register_type R;
     else P = FAIL_PROC;
 }
 
-public void unify_void_instr(n)
+void unify_void_instr(n)
 int n;
 {
   if (RWmode == 'r')
@@ -479,7 +475,7 @@ int n;
   P++;
 }
 
-public void unify_temp_variable_instr(R)
+void unify_temp_variable_instr(R)
 register_type R;
 {
   if (RWmode == 'r')
@@ -494,7 +490,7 @@ register_type R;
   P++;
 }
 
-public void unify_perm_variable_instr(Y)
+void unify_perm_variable_instr(Y)
 int Y;
 {
   if (RWmode == 'r')
@@ -510,7 +506,7 @@ int Y;
   P++;
 }
 
-public void unify_temp_local_value_instr(R)
+void unify_temp_local_value_instr(R)
 register_type R;
 {
   if (RWmode == 'r')
@@ -548,7 +544,7 @@ register_type R;
   }
 }
 
-public void unify_perm_local_value_instr(Y)
+void unify_perm_local_value_instr(Y)
 int Y;
 {
   if (RWmode == 'r')
@@ -585,7 +581,7 @@ int Y;
   }
 }
 
-public void unify_temp_value_instr(R)
+void unify_temp_value_instr(R)
 register_type R;
 {
   if (RWmode == 'r')
@@ -612,7 +608,7 @@ register_type R;
   }
 }
 
-public void unify_perm_value_instr(Y)
+void unify_perm_value_instr(Y)
 int Y;
 {
   if (RWmode == 'r')
@@ -635,7 +631,7 @@ int Y;
   }
 }
 
-public void unify_const_instr(C)
+void unify_const_instr(C)
 atom_addr C;
 {
   if (RWmode == 'r')
@@ -663,7 +659,7 @@ atom_addr C;
   }
 }
 
-public void unify_nil_instr()
+void unify_nil_instr()
 {
   if (RWmode == 'r')
   { address val;
@@ -691,7 +687,7 @@ public void unify_nil_instr()
 }
 
 
-public void switch_on_type_instr(Lv, Lc, Ll, Ls)
+void switch_on_type_instr(Lv, Lc, Ll, Ls)
 code_addr Lv, Lc, Ll, Ls;
 {
   address val;
@@ -712,8 +708,7 @@ code_addr Lv, Lc, Ll, Ls;
 }
 
 
-public void switch_on_constant_instr(tbl)
-struct hash_entry tbl[];
+void switch_on_constant_instr(struct hash_entry tbl[])
 {
   int i;
   address val;
@@ -729,8 +724,7 @@ struct hash_entry tbl[];
 }
 
 
-public void built_in_instr(N)
-int N;
+void built_in_instr(int N)
 {
   switch (N)
   {

@@ -9,17 +9,16 @@
    retained.  It may not not be used for any commercial purposes.
 */
 
-#include "portable.h"
 #include "const.h"
 #include "tags.h"
 #include "types.h"
-#include "mem.i"
+#include "mem.h"
 
 extern struct instr_type codestore[];
 
-public address memory[MAXMEMORY];
+address memory[MAXMEMORY];
 
-public address registers[MAXREGISTER];
+address registers[MAXREGISTER];
 
 
   /* offsets into the choice point frame on the stack */
@@ -80,9 +79,9 @@ extern char RWmode;
    the machine successfully
 */
 
-public address P, CP;
+address P, CP;
 
-public void init_memory()
+void init_memory()
 {
 	HB = 1;        /* a nasty: 0 is reserved for FAIL return from unify! */
 	H = 1;
@@ -98,8 +97,7 @@ public void init_memory()
 extern int proc_count;
 extern struct proc_table_type proc_table[];
 
-public int environment_size(a)
-address a;
+int environment_size(address a)
 {
   if (a <= 1)
     return(0);
@@ -107,7 +105,7 @@ address a;
     return(codestore[a - 1].data.c.env_size + 2); /* + 2 for CP, CE */
 }
 
-public void dump_mem()
+void dump_mem()
 {
   address i, tos;
 

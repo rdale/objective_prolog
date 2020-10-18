@@ -8,6 +8,9 @@
    and may be distributed as long as this copyright notice is
    retained.  It may not be used for any commercial purposes.
 */
+#ifndef _TAGS_H
+#define _TAGS_H
+
 #define tag_32_hi    
 
 #ifdef tag_32_hi     /* tag is top 3 bits of 32 bit integer */
@@ -54,3 +57,6 @@
 	VBL_TAG	= (UNTAG_MASK + 1) * 2;
 	NIL_TAG	= (UNTAG_MASK + 1) * 1;
 */
+
+#endif
+

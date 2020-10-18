@@ -12,12 +12,13 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-
-#include "portable.h"
 #include "const.h"
 #include "tags.h"
 #include "types.h"
-#include "main.i"
+#include "main.h"
+#include "mem.h"
+#include "wam.h"
+#include "load.h"
 
 /* the following flags control execution profiling.
    BENCHMARKING runs the program 20 times
@@ -43,8 +44,10 @@ extern address fail_proc_addr;
 extern address registers[];
 extern char *opstring[];
 
-public void fatal(s)
-char *s;
+static int inf_count;
+static void execute_prog();
+
+void fatal(char *s)
 {
   fprintf(stderr, "Fatal error - %s\n Execution halted\n", s);
   exit(1);
@@ -53,9 +56,9 @@ char *s;
 /* WAM control loop, which calls above procs */
 
 
-private int inf_count = 0;
+static int inf_count = 0;
 
-private void execute_prog()
+static void execute_prog()
 {
   struct instr_type instr;
   /* all WAM programs executed by this have an entry point of `main/0'
@@ -155,9 +158,7 @@ private void execute_prog()
 }
 
   
-public int main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 { 
   loadstore();
 

@@ -11,25 +11,25 @@
 
 #include <stdio.h>
 
-#include "portable.h"
 #include "const.h"
 #include "tags.h"
 #include "types.h"
-#include "unify.i"
+#include "main.h"
+#include "unify.h"
 
 extern address TR, HB, H, B;
 extern address memory[];
 
-private void push_trail(vbl)
-address vbl;
+static int arity();
+
+static void push_trail(address vbl)
 {
   if (TR == HIGHTRAIL)
       fatal("trail overflow");
   *(memory + TR++) = vbl;
 }
 
-public void trail_instr(vbl)
-address vbl;
+void trail_instr(address vbl)
 {
   address v;
 
@@ -44,7 +44,7 @@ address vbl;
       push_trail(v);
 }
 
-public address deref(V)
+address deref(V)
 address V;
 {
   while (TAG_OF(V) == REF_TAG)
@@ -53,16 +53,14 @@ address V;
 }
 
 
-public void bind(Vbl, Term)
-address Vbl, Term;
+void bind(address Vbl, address Term)
 {
   *(memory + WITHOUT_TAG(Vbl)) = Term;
   trail_instr(Vbl);
 }
 extern atom_name atom_table[];
 
-private int arity(addr)
-int addr;
+static int arity(int addr)
 {  	int a;
 	atom_name n;
 
@@ -70,8 +68,7 @@ int addr;
 	return(a);
 }
 
-public address unify(term1, term2)
-address term1, term2;
+address unify(address term1, address term2)
 {
 	address tag1, tag2;
 	if (term1 == term2)
