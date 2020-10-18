@@ -1,0 +1,5 @@
+main/0 :
+put_variable X0,A0
+put_structure f/1,A1
+unify_value X0
+execute p/2

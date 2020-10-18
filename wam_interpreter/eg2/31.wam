@@ -1,0 +1,14 @@
+a/2 :
+allocate
+get_variable Y2,A0
+get_variable Y1,A1
+put_value Y2,A0
+call b/1,1
+put_value Y1,A0
+call c/1,0
+put_structure g/1,A0
+unify_local_value Y0
+put_structure f/1,A1
+unify_local_value Y1
+deallocate
+execute d/2

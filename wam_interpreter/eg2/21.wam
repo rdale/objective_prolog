@@ -1,0 +1,5 @@
+p/2 :
+get_variable X0,A0
+get_structure f/1,A1
+unify_local_value X0
+proceed

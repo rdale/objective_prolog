@@ -1,0 +1,7 @@
+main/0 :
+put_variable X0,A0
+allocate
+call p/1,0
+put_variable X0,A0
+deallocate
+execute q/1

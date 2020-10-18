@@ -1,0 +1,9 @@
+a/2 :
+get_variable X0,A0
+allocate
+get_variable Y1,A1
+put_value X0,A0
+call b/1,1
+put_value Y1,A0
+deallocate
+execute c/1

@@ -1,0 +1,16 @@
+#!/usr/local/bin/perl
+# CAT files, convert from text to latex files.
+# Mosh@cse.iitb.ernet.in, Feb-93.
+foreach $a (@ARGV)
+	{
+	$pro_file= $a . ".pro";
+	$wam_file= $a . ".wam";
+	print "\n%---------------File: $a $pro_file/$wam_file \n" ;
+	print "{\\bf Example: $a}\n";
+	print "\\begin{verbatim}\n" ;
+	print "-----------\n" ;
+	open($f,$pro_file); while (<$f>) { print $_ ; } ; close( $f );
+	print "-----------\n" ;
+	open($f,$wam_file); while (<$f>) { print $_ ; } ; close( $f );
+	print "\\end{verbatim}\n" ;
+	}

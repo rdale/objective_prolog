@@ -1,0 +1,5 @@
+a/1 :
+get_variable X0,A0
+put_value X0,A0
+put_variable X0,A0
+execute b/1

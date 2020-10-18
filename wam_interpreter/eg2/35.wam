@@ -1,0 +1,5 @@
+a/0 :
+allocate
+call !/0,0
+deallocate
+execute b/0

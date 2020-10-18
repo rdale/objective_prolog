@@ -1,0 +1,31 @@
+main/0 :
+put_structure a/1,A0
+allocate
+unify_variable Y1
+put_structure a/1,A2
+unify_constant 1
+put_structure ./2,A1
+get_variable X2,A2
+unify_value X2
+unify_constant []
+call member/2,1
+put_value Y1,A0
+deallocate
+built_in write
+proceed
+
+member/2 :
+try_me_else 6
+get_variable X0,A0
+get_structure ./2,A1
+unify_local_value X0
+unify_void 1
+proceed
+trust_me_else fail
+get_variable X0,A0
+get_structure ./2,A1
+unify_void 1
+unify_variable X1
+put_value X0,A0
+put_value X1,A1
+execute member/2

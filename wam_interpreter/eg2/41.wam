@@ -1,0 +1,5 @@
+a/3 :
+get_variable X0,A0
+get_variable X1,A1
+get_variable X2,A2
+proceed

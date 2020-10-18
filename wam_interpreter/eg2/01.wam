@@ -1,0 +1,3 @@
+main/0 :
+put_variable X0,A0
+execute p/1

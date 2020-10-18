@@ -1,0 +1,7 @@
+main/0 :
+put_variable X0,A0
+put_variable X1,A1
+put_structure g/2,A2
+unify_value X0
+unify_value X1
+execute p/3

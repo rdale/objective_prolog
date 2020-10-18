@@ -1,0 +1,75 @@
+2: main/0
+3: allocate
+4: put_variable
+5: put_variable
+6: put_structure
+7: unify_constant
+8: unify_constant
+9: put_structure
+10: unify_constant
+11: get_variable
+12: unify_value
+13: put_structure
+14: unify_constant
+15: get_variable
+16: unify_value
+17: put_structure
+18: unify_constant
+19: get_variable
+20: unify_value
+21: put_structure
+22: unify_constant
+23: get_variable
+24: unify_value
+25: call
+26: put_variable
+27: put_structure
+28: unify_variable
+29: unify_variable
+30: put_value
+31: call
+32: put_value
+33: built_in
+34: built_in
+35: put_variable
+36: built_in
+37: built_in
+38: put_unsafe_value
+39: built_in
+40: built_in
+41: put_unsafe_value
+42: built_in
+43: built_in
+44: put_value
+45: built_in
+46: built_in
+47: put_unsafe_value
+48: deallocate
+49: built_in
+50: proceed
+51: append/3
+52: try_me_else
+53: get_const
+54: get_variable
+55: get_value
+56: proceed
+57: trust_me_else
+58: get_structure
+59: unify_variable
+60: unify_variable
+61: get_variable
+62: get_structure
+63: unify_value
+64: unify_variable
+65: get_variable
+66: put_value
+67: put_value
+68: put_value
+69: execute
+loaded store
+a
+_29
+.(b, .(c, .(d, .(e, []))))
+[]
+[]
+.(a, [])Execution terminated succesfully

@@ -1,0 +1,30 @@
+2: main/0
+3: allocate
+4: put_variable
+5: put_variable
+6: call
+7: put_unsafe_value
+8: built_in
+9: built_in
+10: put_unsafe_value
+11: deallocate
+12: built_in
+13: proceed
+14: member/2
+15: try_me_else
+16: get_variable
+17: get_structure
+18: unify_local_value
+19: unify_void
+20: proceed
+21: trust_me_else
+22: get_variable
+23: get_structure
+24: unify_void
+25: unify_variable
+26: put_value
+27: put_value
+28: execute
+loaded store
+_5
+.(_5, _4)Execution terminated succesfully

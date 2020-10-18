@@ -1,0 +1,19 @@
+a/2 :
+try_me_else 4
+get_const a,A0
+get_const 1,A1
+proceed
+retry_me_else 5
+get_structure f/1,A0
+unify_constant a
+get_const 2,A1
+proceed
+retry_me_else 5
+get_structure f/1,A0
+unify_constant b
+get_const 3,A1
+proceed
+trust_me_else fail
+get_const [],A0
+get_const 25,A1
+proceed

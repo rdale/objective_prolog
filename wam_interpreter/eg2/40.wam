@@ -1,0 +1,11 @@
+a/2 :
+get_const [],A0
+get_structure ./2,A1
+unify_variable X0
+allocate
+unify_variable Y1
+put_value X0,A0
+call b/1,1
+put_value Y1,A0
+deallocate
+execute c/1

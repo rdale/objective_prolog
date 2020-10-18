@@ -1,0 +1,37 @@
+2: main/0
+3: allocate
+4: put_variable
+5: put_const
+6: call
+7: put_unsafe_value
+8: built_in
+9: deallocate
+10: built_in
+11: proceed
+12: gp/2
+13: get_variable
+14: allocate
+15: get_variable
+16: put_value
+17: put_variable
+18: call
+19: put_unsafe_value
+20: put_value
+21: deallocate
+22: execute
+23: p/2
+24: try_me_else
+25: get_const
+26: get_const
+27: proceed
+28: retry_me_else
+29: get_const
+30: get_const
+31: proceed
+32: trust_me_else
+33: get_const
+34: get_const
+35: proceed
+loaded store
+jane
+Execution terminated succesfully

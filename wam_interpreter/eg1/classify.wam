@@ -1,0 +1,140 @@
+main/0 :
+put_const h1,A0
+allocate
+put_variable Y1,A1
+call classification/2,1
+put_unsafe_value Y1,A0
+deallocate
+built_in write
+proceed
+
+classification/2 :
+allocate
+get_variable Y2,A0
+get_variable X1,A1
+put_value X1,A0
+put_value X1,A1
+put_variable Y1,A1
+call animal/2,2
+put_value Y2,A0
+put_unsafe_value Y1,A1
+deallocate
+execute member/2
+
+animal/2 :
+try_me_else 7
+get_structure animal/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute aquatic/2
+trust_me_else fail
+get_structure animal/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute terrestrial/2
+
+aquatic/2 :
+get_const aquatic,A0
+get_structure ./2,A1
+unify_constant a1
+unify_variable X0
+put_value X0,A2
+get_structure ./2,A2
+unify_constant a2
+unify_constant []
+proceed
+
+terrestrial/2 :
+try_me_else 7
+get_structure terrestrial/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute reptile/2
+retry_me_else 7
+get_structure terrestrial/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute bird/2
+trust_me_else fail
+get_structure terrestrial/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute mammal/2
+
+reptile/2 :
+get_const reptile,A0
+get_structure ./2,A1
+unify_constant r1
+unify_constant []
+proceed
+
+bird/2 :
+get_const bird,A0
+get_structure ./2,A1
+unify_constant b1
+unify_variable X0
+put_value X0,A2
+get_structure ./2,A2
+unify_constant b2
+unify_constant []
+proceed
+
+mammal/2 :
+try_me_else 7
+get_structure mammal/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute herbivore/2
+trust_me_else fail
+get_structure mammal/1,A0
+unify_variable X0
+get_variable X1,A1
+put_value X0,A0
+put_value X1,A1
+execute omnivore/2
+
+herbivore/2 :
+get_const herbivore,A0
+get_structure ./2,A1
+unify_constant h1
+unify_constant []
+proceed
+
+omnivore/2 :
+get_const omnivore,A0
+get_structure ./2,A1
+unify_constant o1
+unify_variable X0
+put_value X0,A2
+get_structure ./2,A2
+unify_constant o2
+unify_constant []
+proceed
+
+member/2 :
+try_me_else 6
+get_variable X0,A0
+get_structure ./2,A1
+unify_local_value X0
+unify_void 1
+proceed
+trust_me_else fail
+get_variable X0,A0
+get_structure ./2,A1
+unify_void 1
+unify_variable X1
+put_value X0,A0
+put_value X1,A1
+execute member/2

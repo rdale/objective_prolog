@@ -1,0 +1,9 @@
+main/0 :
+allocate
+put_variable Y2,A0
+put_variable Y1,A1
+call p/2,2
+put_unsafe_value Y2,A0
+put_unsafe_value Y1,A1
+deallocate
+execute q/2
